@@ -1,0 +1,23 @@
+.notif-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin: 12px 0;
+  border-left: 4px solid #4a6cf7;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.notif-card h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 17px;
+}
+
+.notif-card p {
+  margin: 8px 0;
+  color: #374151;
+}
+
+.notif-card small {
+  color: #6b7280;
+}

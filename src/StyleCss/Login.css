@@ -1,0 +1,114 @@
+/*
+Login.css
+---------
+Place this CSS in src/Login.css (or the path you prefer). It's pure CSS and makes the component responsive.
+*/
+
+/* Reset & utilities */
+:root{
+  --bg: #f3f4f6;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --accent: #4F46E5;
+  --accent-600: #4338CA;
+  --input-border: #e5e7eb;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); margin:0}
+
+/* Root centering */
+.login-root{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+/* Card */
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(15,23,42,0.08);
+  padding:28px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
+}
+
+
+.logo-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-img {
+  width: 80px;          /* taille ajustable */
+  height: 80px;
+  object-fit: contain;  /* garde les proportions */
+  border-radius: 50%;   /* optionnel : rend le logo rond */
+}
+
+
+.login-title{
+  margin:0;
+  font-size:20px;
+  color:#0f172a;
+  font-weight:600;
+}
+
+.login-form{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.input{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--input-border);
+  border-radius:10px;
+  font-size:15px;
+  outline:none;
+  transition:box-shadow .15s, border-color .15s;
+}
+.input:focus{
+  box-shadow:0 6px 18px rgba(79,70,229,0.12);
+  border-color:var(--accent-600);
+}
+
+.btn{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:0;
+  background:var(--accent);
+  color:white;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s;
+}
+.btn:active{transform:translateY(1px)}
+.btn:hover{box-shadow:0 10px 24px rgba(79,70,229,0.18)}
+
+/* Small note for accessibility (visually hidden label) */
+.sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+/* Responsive tweaks */
+@media (max-width:480px){
+  .login-card{padding:20px; border-radius:10px}
+  .logo-box{width:60px;height:60px}
+  .login-title{font-size:18px}
+}
+
+@media (min-height:700px){
+  .login-card{transform:translateY(-10px)}
+}

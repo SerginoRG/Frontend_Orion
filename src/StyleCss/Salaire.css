@@ -1,0 +1,425 @@
+/* ==========================================
+   CONTAINER PRINCIPAL
+   ========================================== */
+.salaire-container {
+  padding: 30px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.salaire-container h1 {
+  font-size: 2.5rem;
+  color: #1e293b;
+  margin-bottom: 30px;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================
+   BOUTON AJOUTER
+   ========================================== */
+.btn-add {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.btn-add:active {
+  transform: translateY(0);
+}
+
+.btn-add::before {
+  content: "+";
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* ==========================================
+   FORMULAIRE (si nécessaire)
+   ========================================== */
+.salaire-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.salaire-form input,
+.salaire-form select {
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.salaire-form input:focus,
+.salaire-form select:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.salaire-form button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.salaire-form button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+/* ==========================================
+   TABLEAU DATATABLE
+   ========================================== */
+.salaire-container .rdt_Table {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.salaire-container .rdt_TableHeadRow {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+}
+
+.salaire-container .rdt_TableCol {
+  color: white !important;
+  padding: 18px 15px;
+}
+
+.salaire-container .rdt_TableRow {
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.salaire-container .rdt_TableRow:hover {
+  background-color: #f8fafc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.salaire-container .rdt_TableCell {
+  padding: 16px 15px;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+/* Colonne Salaire Net - mise en évidence */
+.salaire-container .rdt_TableCell:nth-child(6) {
+  font-weight: 700;
+  color: #059669;
+  font-size: 1.05rem;
+}
+
+/* ==========================================
+   BOUTONS D'ACTION
+   ========================================== */
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.btn-edit:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5);
+}
+
+/* ==========================================
+   PAGINATION
+   ========================================== */
+.salaire-container .rdt_Pagination {
+  background: white;
+  border-top: 2px solid #e2e8f0;
+  padding: 15px;
+}
+
+.salaire-container .rdt_Pagination button {
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.salaire-container .rdt_Pagination button:hover:not(:disabled) {
+  background: #764ba2;
+  transform: scale(1.05);
+}
+
+.salaire-container .rdt_Pagination button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   SWEETALERT2 CUSTOMISATION
+   ========================================== */
+.swal2-popup {
+  border-radius: 16px;
+  padding: 25px;
+}
+
+.swal2-title {
+  color: #1e293b;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.swal2-input,
+.swal2-select {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin: 8px 0;
+}
+
+.swal2-input:focus,
+.swal2-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.swal2-confirm {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.swal2-cancel {
+  background: #94a3b8 !important;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-weight: 600;
+}
+
+/* Labels dans SweetAlert */
+.swal2-html-container label {
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  color: #475569;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+}
+
+/* Checkbox calcul auto */
+.swal2-html-container input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+/* ==========================================
+   BADGES ET STATUTS
+   ========================================== */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-warning {
+  background: #fed7aa;
+  color: #92400e;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+@media (max-width: 768px) {
+  .salaire-container {
+    padding: 15px;
+  }
+
+  .salaire-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  .btn-add {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+
+  .salaire-form {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn-delete,
+  .btn-edit {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .salaire-container .rdt_TableCell {
+    padding: 12px 8px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .salaire-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .btn-add::before {
+    font-size: 1.2rem;
+  }
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.salaire-container {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Effet de chargement */
+.loading-spinner {
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==========================================
+   TOOLTIPS
+   ========================================== */
+[data-tooltip] {
+  position: relative;
+  cursor: pointer;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+}

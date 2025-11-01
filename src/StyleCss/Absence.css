@@ -1,0 +1,135 @@
+/* === Style global de la page d'absence === */
+.absence-container {
+ padding: 20px;
+  background-color: #f8f9fa;
+}
+
+/* === Carte du formulaire === */
+.absence-card {
+  background-color: #fff;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  transition: transform 0.3s ease;
+}
+
+.absence-card:hover {
+  transform: translateY(-3px);
+}
+
+/* === Titre === */
+.absence-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2b4c7e;
+  margin-bottom: 20px;
+}
+.btn-add {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.btn-add:hover {
+  background-color: #0056b3;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background-color: #b02a37;
+}
+
+/* === Champs du formulaire === */
+.absence-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.absence-form label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.absence-form input[type="date"],
+.absence-form select,
+.absence-form input[type="file"],
+.absence-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  font-size: 15px;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.absence-form input:focus,
+.absence-form select:focus,
+.absence-form textarea:focus {
+  border-color: #2b4c7e;
+  background-color: #fff;
+  outline: none;
+}
+
+/* === Bouton d’envoi === */
+.absence-btn {
+  background-color: #2b4c7e;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.absence-btn:hover {
+  background-color: #1f365a;
+  transform: translateY(-2px);
+}
+
+/* === Message de validation === */
+.absence-success {
+  text-align: center;
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* === Message d’erreur === */
+.absence-error {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* === Responsive (mobile) === */
+@media (max-width: 768px) {
+  .absence-card {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .absence-title {
+    font-size: 20px;
+  }
+}

@@ -1,0 +1,445 @@
+/* src/Admin/Crud.css */
+/* ===== CONTAINER PRINCIPAL ===== */
+.crud-container {
+  width: 100%;
+  padding: 30px;
+}
+
+/* ===== EN-TÊTE AU-DESSUS DU TABLEAU ===== */
+.crud-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.crud-table-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.crud-card {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  animation: none;
+}
+
+.crud-card-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.crud-card-header h2 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.crud-card-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* ===== FORMULAIRE ===== */
+.crud-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.crud-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crud-form-group label {
+  color: #333;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.crud-form-group input[type="text"],
+.crud-form-group input[type="email"],
+.crud-form-group input[type="number"],
+.crud-form-group input[type="date"],
+.crud-form-group input[type="password"],
+.crud-form-group textarea,
+.crud-form-group select {
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  background: white;
+}
+
+.crud-form-group input[type="text"]:focus,
+.crud-form-group textarea:focus,
+.crud-form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.crud-form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.crud-form-group select {
+  cursor: pointer;
+}
+
+/* ===== MODALE ===== */
+.crud-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.crud-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+  margin: auto;
+}
+
+.crud-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2rem;
+  color: #666;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.crud-close-btn:hover {
+  color: #ff4d4d;
+}
+
+/* ===== BOUTON AJOUTER ===== */
+.crud-add-btn {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.crud-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ===== TABLE ===== */
+.crud-table-container {
+  background: white;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== UPLOAD D'IMAGE ===== */
+.crud-file-input-wrapper {
+  position: relative;
+}
+
+.crud-file-input {
+  display: none;
+}
+
+.crud-file-label {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  text-align: center;
+}
+
+.crud-file-label:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.crud-file-label:active {
+  transform: translateY(0);
+}
+
+.crud-actions-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Style de base pour les icônes */
+.crud-btn-icon {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icône Modifier (verte) */
+.crud-btn-icon.edit {
+  color: #16a34a;
+  background-color: rgba(22, 163, 74, 0.1);
+}
+
+.crud-btn-icon.edit:hover {
+  background-color: rgba(22, 163, 74, 0.2);
+  transform: scale(1.1);
+}
+
+/* Icône Supprimer (rouge) */
+.crud-btn-icon.delete {
+  color: #dc2626;
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+.crud-btn-icon.delete:hover {
+  background-color: rgba(220, 38, 38, 0.2);
+  transform: scale(1.1);
+}
+
+/* ===== APERÇU IMAGE ===== */
+.crud-image-preview {
+  margin-top: 15px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #e0e0e0;
+  animation: fadeIn 0.3s ease;
+}
+
+.crud-image-preview img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===== BOUTONS SUBMIT ET ANNULER ===== */
+.crud-form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.crud-cancel-btn {
+  flex: 1;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+}
+
+.crud-cancel-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+}
+
+.crud-cancel-btn:active {
+  transform: translateY(-1px);
+}
+
+.crud-submit-btn {
+  flex: 1;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(17, 153, 142, 0.3);
+}
+
+.crud-submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(17, 153, 142, 0.4);
+}
+
+.crud-submit-btn:active {
+  transform: translateY(-1px);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .crud-container {
+    padding: 15px;
+  }
+
+  .crud-modal-content {
+    width: 95%;
+    padding: 20px;
+    max-height: 95vh;
+  }
+
+  .crud-card-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .crud-form-group input[type="text"],
+  .crud-form-group textarea,
+  .crud-form-group select {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+
+  .crud-submit-btn {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+
+  .crud-image-preview img {
+    height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .crud-modal-overlay {
+    padding: 10px;
+  }
+
+  .crud-modal-content {
+    padding: 15px;
+  }
+
+  .crud-card-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .crud-close-btn {
+    font-size: 1.5rem;
+    top: 10px;
+    right: 15px;
+  }
+
+  .crud-file-label {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .crud-submit-btn {
+    width: 100%;
+  }
+
+  .crud-form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .crud-cancel-btn {
+    width: 100%;
+  }
+}
+
+/* Conteneur de la barre de recherche */
+.crud-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  padding: 8px 12px;
+  border: 1px solid #ccc; /*  Bordure visible */
+  border-radius: 8px;
+  width: 300px;
+  margin-bottom: 20px;
+
+  /* Position à droite */
+  margin-left: auto;
+  justify-content: flex-start;
+}
+
+/* Icône de recherche */
+.crud-search-bar .search-icon {
+  color: #666;
+}
+
+/* Champ de texte */
+.crud-search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+}
+
+/* Effet focus (quand l'utilisateur clique sur l'input) */
+.crud-search-bar:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.4);
+}
+
