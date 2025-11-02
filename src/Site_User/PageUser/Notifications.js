@@ -1,20 +1,63 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2"; // ✅ Import SweetAlert
+import { FaTrash } from "react-icons/fa";
 import "../../StyleCss/Notifications.css";
 
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const userData = JSON.parse(sessionStorage.getItem("userData")); // ✅ SessionStorage
-    const employe_id = userData?.id_employe;
+  const userData = JSON.parse(sessionStorage.getItem("userData"));
+  if (!userData) return;
 
-    if (!employe_id) return; // sécurité
+  axios.put(`http://127.0.0.1:8000/api/user/${userData.id_employe}/notifications/mark-read`)
+    .then(() => {
+      // Optionnel: rafraîchir le compteur dans le menu
+      window.dispatchEvent(new Event("notifUpdate"));
+    })
+    .catch(err => console.log(err));
+}, []);
+
+
+  const fetchNotifications = () => {
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const employe_id = userData?.id_employe;
+    if (!employe_id) return;
 
     axios.get(`http://127.0.0.1:8000/api/user/${employe_id}/notifications`)
       .then(res => setNotifications(res.data))
       .catch(err => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchNotifications();
   }, []);
+
+  // ✅ Fonction supprimer notification avec SweetAlert
+  const deleteNotification = (id) => {
+    Swal.fire({
+      title: "Supprimer ?",
+      text: "Voulez-vous vraiment supprimer cette notification ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Oui, supprimer",
+      cancelButtonText: "Annuler"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`http://127.0.0.1:8000/api/notifications/${id}`)
+          .then(() => {
+            Swal.fire("Supprimée !", "La notification a été supprimée.", "success");
+            fetchNotifications();
+          })
+          .catch(() => {
+            Swal.fire("Erreur", "Une erreur est survenue.", "error");
+          });
+      }
+    });
+  };
 
   return (
     <div>
@@ -28,6 +71,13 @@ function Notifications() {
             <h3>{n.titre}</h3>
             <p>{n.message}</p>
             <small>{new Date(n.created_at).toLocaleString("fr-FR")}</small>
+
+            {/* ✅ Icône supprimer */}
+            <FaTrash
+              className="delete-icon"
+              onClick={() => deleteNotification(n.id_notification)}
+            />
+
             <hr />
           </div>
         ))

@@ -1,4 +1,3 @@
-// src/Site_User/MenuUser/MenuUser
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -10,6 +9,7 @@ import {
   FaBell,
   FaSignOutAlt,
 } from "react-icons/fa";
+import axios from "axios";
 import "../../StyleCss/Menu.css";
 
 function MenuUser() {
@@ -18,13 +18,39 @@ function MenuUser() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
 
+  // ✅ Notification count doit être déclaré ici
+  const [notifCount, setNotifCount] = useState(0);
+
+useEffect(() => {
+  const fetchNotif = () => {
+    const data = JSON.parse(sessionStorage.getItem("userData"));
+    if (!data) return;
+
+    axios.get(`http://127.0.0.1:8000/api/user/${data.id_employe}/notifications/unread-count`)
+      .then(res => setNotifCount(res.data))
+      .catch(err => console.log(err));
+  };
+
+  fetchNotif();
+
+  // ✅ Mise à jour auto lorsque les notifications sont lues
+  window.addEventListener("notifUpdate", fetchNotif);
+  return () => window.removeEventListener("notifUpdate", fetchNotif);
+}, []);
+
+
   useEffect(() => {
-    // ✅ Récupération depuis sessionStorage (et non localStorage)
     const data = JSON.parse(sessionStorage.getItem("userData"));
     if (!data) {
-      navigate("/"); // redirection si non connecté
+      navigate("/");
     } else {
       setUserData(data);
+
+      // ✅ Charger le nombre de notifications non lues
+      axios
+        .get(`http://127.0.0.1:8000/api/user/${data.id_employe}/notifications/unread-count`)
+        .then((res) => setNotifCount(res.data))
+        .catch((err) => console.log(err));
     }
   }, [navigate]);
 
@@ -44,7 +70,6 @@ function MenuUser() {
       cancelButtonText: "Non",
     }).then((result) => {
       if (result.isConfirmed) {
-        // ✅ Nettoyer sessionStorage
         sessionStorage.removeItem("userData");
         navigate("/");
       }
@@ -79,12 +104,20 @@ function MenuUser() {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`menu-link ${
-                    location.pathname === item.path ? "active" : ""
-                  }`}
+                  className={`menu-link ${location.pathname === item.path ? "active" : ""}`}
                 >
                   <span className="menu-icon">{item.icon}</span>
-                  {open && <span className="menu-label">{item.label}</span>}
+
+                  {open && (
+                    <span className="menu-label">
+                      {item.label}
+
+                      {/* ✅ Badge Notification */}
+                      {item.label === "Notifications" && notifCount > 0 && (
+                        <span className="badge-notif">{notifCount}</span>
+                      )}
+                    </span>
+                  )}
                 </Link>
               </li>
             ))}

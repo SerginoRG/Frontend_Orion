@@ -374,6 +374,17 @@
   word-break: break-all;
 }
 
+
+
+.badge-notif {
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 7px;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
 .logout-btn {
   background-color: #e63946;
   color: white;

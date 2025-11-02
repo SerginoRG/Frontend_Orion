@@ -58,6 +58,14 @@ function MenuAdmin() {
     });
   };
 
+  useEffect(() => {
+  const user = sessionStorage.getItem("user");
+  if (!user) {
+    navigate("/admin/login");
+  }
+}, [navigate]);
+
+
   return (
     <div className="admin-container">
       {/* Sidebar */}

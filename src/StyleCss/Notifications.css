@@ -21,3 +21,14 @@
 .notif-card small {
   color: #6b7280;
 }
+.delete-icon {
+  color: red;
+  cursor: pointer;
+  float: right;
+  margin-left: 10px;
+  transition: 0.2s;
+}
+
+.delete-icon:hover {
+  transform: scale(1.2);
+}

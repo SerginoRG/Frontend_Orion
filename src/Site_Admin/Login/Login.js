@@ -10,25 +10,31 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await axios.post("http://127.0.0.1:8000/api/login", {
-        email,
-        password,
-      });
+  try {
+    const res = await axios.post("http://127.0.0.1:8000/api/login", {
+      email,
+      password,
+    });
 
-     // Swal.fire("Succès", res.data.message, "success");
-      // Redirection vers le tableau de bord admin
-      navigate("/admin/dashboard");
-    } catch (err) {
-      if (err.response && err.response.data.message) {
-        Swal.fire("Erreur", err.response.data.message, "error");
-      } else {
-        Swal.fire("Erreur", "Une erreur est survenue", "error");
-      }
+    // Stocker les infos de l'utilisateur dans la session
+    sessionStorage.setItem("user", JSON.stringify(res.data.user));
+    sessionStorage.setItem("token", res.data.token); // si tu utilises un token JWT
+
+    Swal.fire("Succès", "Connexion réussie", "success");
+
+    // Redirection vers le tableau de bord admin
+    navigate("/admin/dashboard");
+  } catch (err) {
+    if (err.response && err.response.data.message) {
+      Swal.fire("Erreur", err.response.data.message, "error");
+    } else {
+      Swal.fire("Erreur", "Une erreur est survenue", "error");
     }
-  };
+  }
+};
+
 
   return (
     <div className="login-root">
