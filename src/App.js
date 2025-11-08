@@ -9,10 +9,11 @@ import Acceuil from "./Site_Admin/PageAdmin/Acceuil";
 import Contrat from "./Site_Admin/PageAdmin/Contrat";
 import Service from "./Site_Admin/PageAdmin/Service";
 import Employe from "./Site_Admin/PageAdmin/Employe";
-import Presence from "./Site_Admin/PageAdmin/Presence";
+import Presence from "./Site_Admin/PageAdmin/PresenceAdmin";
 import User from "./Site_Admin/PageAdmin/User";
 import Salaire from "./Site_Admin/PageAdmin/Salaire";
 import BulletinSalaire from "./Site_Admin/PageAdmin/BulletinSalaire";
+import Conge from "./Site_Admin/PageAdmin/Conge";
 
 // Site Utilisateur
 import LoginUser from "./Site_User/LoginUser/LoginUser";
@@ -35,7 +36,7 @@ function App() {
           <Route path="presence" element={<PresenceUser />} />
           <Route path="absence" element={<AbsenceUser />} />
           <Route path="notifications" element={<Notifications />} />
-        </Route>
+        </Route>  
 
         {/* Page de connexion admin */}
         <Route path="/admin/login" element={<Login />} />
@@ -49,6 +50,7 @@ function App() {
           <Route path="contrats" element={<Contrat />} />
           <Route path="presences" element={<Presence />} />
           <Route path="absences" element={<Absence />} />
+          <Route path="conge" element={<Conge />} />
           <Route path="salaires" element={< Salaire />} />
           <Route path="bulletin" element={<BulletinSalaire/>} />
         </Route>

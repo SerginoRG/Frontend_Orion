@@ -16,7 +16,7 @@
 .crud-table-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #333;
+  color: #000000;
 }
 
 .crud-card {
@@ -148,7 +148,7 @@
 /* ===== BOUTON AJOUTER ===== */
 .crud-add-btn {
   padding: 10px 22px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background-color: #28a745;
   color: white;
   font-weight: 600;
   border: none;
@@ -160,7 +160,7 @@
 
 .crud-add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  background-color: #218838; /* plus foncé au survol */
 }
 
 /* ===== TABLE ===== */
@@ -443,3 +443,86 @@
   box-shadow: 0 0 3px rgba(0, 123, 255, 0.4);
 }
 
+/* ===== RESPONSIVE DESIGN AMÉLIORÉ ===== */
+
+/* Table responsive */
+.crud-table-container {
+  overflow-x: auto;
+}
+
+/* --- Table header & barre d'action --- */
+@media (max-width: 900px) {
+
+  .crud-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .crud-add-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .crud-search-bar {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* --- Formulaire & modal --- */
+@media (max-width: 768px) {
+
+  .crud-modal-content {
+    padding: 18px;
+    width: 95%;
+  }
+
+  .crud-form-group input,
+  .crud-form-group select,
+  .crud-form-group textarea {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+  }
+
+  .crud-card-header h2 {
+    font-size: 1.4rem;
+  }
+}
+
+/* --- Mobile petit écran --- */
+@media (max-width: 480px) {
+
+  .crud-container {
+    padding: 12px;
+  }
+
+  .crud-table-title {
+    font-size: 1.2rem;
+  }
+
+  .crud-search-bar {
+    width: 100%;
+    padding: 6px 10px;
+  }
+
+  .crud-add-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  .crud-form-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .crud-cancel-btn,
+  .crud-submit-btn {
+    width: 100%;
+  }
+
+  .crud-modal-content {
+    padding: 15px;
+  }
+}

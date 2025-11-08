@@ -64,7 +64,7 @@ function Profil() {
             </tr>
             <tr>
               <td><strong>Date d’embauche :</strong></td>
-              <td>{profil.employe.date_embauche}</td>
+              <td>{new Date(profil.employe.date_embauche).toLocaleDateString("fr-FR")}</td>
             </tr>
             <tr>
               <td><strong>Salaire de base :</strong></td>

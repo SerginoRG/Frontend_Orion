@@ -1,25 +1,32 @@
-.presence-container {
+/* ====== CONTENEUR PRINCIPAL ====== */
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  min-height: 80vh; /* Centre verticalement */
-  text-align: center;
-  padding: 30px;
-  background: #f9f9f9; /* Fond clair neutre */
-  border-radius: 12px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.presence-container h2 {
-  color: #222;
+.container h2 {
+  color: #1e3a8a;
   font-size: 2rem;
-  margin-bottom: 20px;
   font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-.btn-presence {
-  background-color: #4CAF50; 
-  color: white;
+.user-info {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #4b5563;
+}
+
+.user-info p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+}
+
+/* ====== BOUTONS ARRIVÉE / DÉPART ====== */
+.btn-pre {
   font-size: 1.1rem;
   font-weight: 500;
   padding: 12px 35px;
@@ -29,186 +36,87 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  color: #fff;
+  width: 25%;
 }
 
-.btn-presence:hover {
+.btn-arrivee {
+  background-color: #4CAF50;
+}
+
+.btn-arrivee:hover {
   background-color: #45a049;
   transform: scale(1.05);
 }
 
-.btn-presence:active {
+.btn-arrivee:active {
   background-color: #388e3c;
   transform: scale(0.98);
 }
 
-/* Filtre par date */
+.btn-depart {
+  background-color: #ef4444;
+}
+
+.btn-depart:hover {
+  background-color: #dc2626;
+  transform: scale(1.05);
+}
+
+.btn-depart:active {
+  background-color: #b91c1c;
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.6;
+}
+
+/* ====== MESSAGE D’INFO ====== */
+.info-message {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  text-align: center;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* ====== FILTRE PAR DATE ====== */
 .date-filter {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
   flex-wrap: wrap;
-  justify-content: center;
-}
-
-.date-filter label {
-  font-weight: 500;
-}
-
-.date-filter input[type="date"] {
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.date-filter button {
-  padding: 6px 15px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.date-filter button:hover {
-  background-color: #0056b3;
-}
-
-/* DataTable */
-.datatable-container {
-  width: 90%;
-  margin-top: 10px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  padding: 15px;
-}
-
-/* Table classique pour fallback ou style supplémentaire */
-.table-presence {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-}
-
-.table-presence th,
-.table-presence td {
-  border: 1px solid #e0e0e0;
-  padding: 10px;
-  text-align: center;
-}
-
-.table-presence th {
-  background-color: #f5f5f5; /* Gris clair */
-  color: #333;
-  font-weight: 600;
-}
-
-.table-presence tr:nth-child(even) {
-  background-color: #fafafa; /* Lignes alternées */
-}
-
-.table-presence tr:hover {
-  background-color: #f1f1f1; /* Survol */
-}
-.presence-container {
-  padding: 20px;
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.presence-container h1 {
-  font-size: 22px;
-  color: #222;
-}
-
-.presence-container p {
-  color: #555;
-  margin-bottom: 20px;
-}
-
-/* ====== CONTENEUR PRINCIPAL ====== */
-.presence-container {
-  padding: 25px;
-  background-color: #f8fafc;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 95%;
-  margin: 20px auto;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.presence-container h1 {
-  text-align: center;
-  color: #1e3a8a;
-  margin-bottom: 5px;
-}
-
-.presence-container p {
-  text-align: center;
-  color: #4b5563;
-  margin-bottom: 25px;
-}
-
-/* ====== RECHERCHE PAR NOM ====== */
-.filtre-nom {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.filtre-nom input {
-  width: 320px;
-  padding: 10px;
-  font-size: 15px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  outline: none;
-  transition: all 0.2s ease-in-out;
-}
-
-.filtre-nom input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
-}
-
-/* ====== FILTRE PAR DATES ====== */
-.filtre-dates {
-  display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
   margin-bottom: 25px;
-  flex-wrap: wrap;
 }
 
-.filtre-dates label {
+.date-filter label {
   font-weight: 500;
   color: #374151;
 }
 
-.filtre-dates input[type="date"] {
-  padding: 8px;
+.date-filter input[type="date"] {
+  padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid #cbd5e1;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.filtre-dates input[type="date"]:focus {
+.date-filter input[type="date"]:focus {
   border-color: #2563eb;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
 }
 
-/* ====== BOUTONS ====== */
-.btn-filtrer,
-.btn-reset {
+.date-filter button {
   padding: 8px 14px;
   border-radius: 6px;
   border: none;
@@ -218,32 +126,41 @@
   transition: all 0.2s ease-in-out;
 }
 
-.btn-filtrer {
+.date-filter button:first-of-type {
   background-color: #2563eb;
-  color: #ffffff;
+  color: #fff;
 }
 
-.btn-filtrer:hover {
+.date-filter button:first-of-type:hover {
   background-color: #1d4ed8;
 }
 
-.btn-reset {
+.date-filter button:last-of-type {
   background-color: #6b7280;
-  color: #ffffff;
+  color: #fff;
 }
 
-.btn-reset:hover {
+.date-filter button:last-of-type:hover {
   background-color: #4b5563;
 }
 
-/* ====== TABLEAU ====== */
+/* ====== DATATABLE ====== */
+.datatable-container {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-top: 15px;
+}
+
 .rdt_TableHeadRow {
   background-color: #e0e7ff !important;
 }
 
 .rdt_TableHeadCell {
   font-weight: bold;
-  color: #1e3a8a !important;
+  color: #121214 !important;
 }
 
 .rdt_TableRow:hover {
@@ -255,26 +172,23 @@
   border-top: 1px solid #e5e7eb !important;
 }
 
-
-
-.btn-presence:disabled {
-  background-color: #ccc !important;
-  cursor: not-allowed !important;
-  box-shadow: none;
-  transform: none;
+/* ====== BADGES STATUT ====== */
+.statut-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: #fff;
 }
 
-
-.btn-filtrer-periode {
-  background: #2563eb;
-  color: white;
-  padding: 9px 14px;
-  border-radius: 6px;
-  border: none;
-  margin-bottom: 10px;
-  cursor: pointer;
+.statut-badge.present {
+  background-color: #4CAF50;
 }
-.btn-filtrer-periode.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+
+.statut-badge.absent {
+  background-color: #ef4444;
+}
+
+.statut-badge.retard {
+  background-color: #f59e0b;
 }

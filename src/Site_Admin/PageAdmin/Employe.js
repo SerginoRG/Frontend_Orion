@@ -423,12 +423,12 @@ const handleView = async (row) => {
                     <p><strong>Matricule :</strong> {matriculeEmploye}</p>
                     <p><strong>Nom :</strong> {nomEmploye}</p>
                     <p><strong>Prénom :</strong> {prenomEmploye}</p>
-                    <p><strong>Date de naissance :</strong> {dateNaissanceEmploye}</p>
+                    <p><strong>Date de naissance :</strong> {new Date(dateNaissanceEmploye).toLocaleDateString("fr-FR")}</p>
                     <p><strong>CIN :</strong> {cinEmploye}</p>
                     <p><strong>Adresse :</strong> {adresseEmploye}</p>
                     <p><strong>Email :</strong> {emailEmploye}</p>
                     <p><strong>Téléphone :</strong> {telephoneEmploye}</p>
-                    <p><strong>Date d'embauche :</strong> {dateEmbaucheEmploye}</p>
+                    <p><strong>Date d'embauche :</strong> {new Date(dateEmbaucheEmploye).toLocaleDateString("fr-FR")}</p>
                     <p><strong>Poste :</strong> {posteEmploye}</p>
                     <p><strong>Salaire de base :</strong> {salaireBaseEmploye}</p>
                     <p><strong>Service :</strong> {nomService}</p>

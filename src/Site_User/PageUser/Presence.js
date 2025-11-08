@@ -9,14 +9,12 @@ function Presence() {
   const [dateFin, setDateFin] = useState("");
   const [filteredHistorique, setFilteredHistorique] = useState([]);
   const [historique, setHistorique] = useState([]);
-  const [isArrivee, setIsArrivee] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPeriodType, setCurrentPeriodType] = useState(null); // 'arrivee-matin', 'depart-matin', 'arrivee-apresmidi', 'depart-apresmidi', ou null
+  const [currentPeriodType, setCurrentPeriodType] = useState(null);
   const [isButtonDisabledTemp, setIsButtonDisabledTemp] = useState(false);
   
   const userData = JSON.parse(sessionStorage.getItem("userData"));
   const employeId = userData?.id_employe || userData?.employe_id;
-  const storageKey = `isArrivee_${employeId}`;
 
   useEffect(() => {
     if (!employeId || employeId === "undefined" || employeId === "null") {
@@ -32,22 +30,6 @@ function Presence() {
       });
     }
   }, [employeId]);
-
-  const checkPresenceStatus = async () => {
-    if (!employeId) return;
-    try {
-      const res = await axios.get(
-        `http://127.0.0.1:8000/api/presence/check-status/${employeId}`
-      );
-      const hasArrival = res.data.has_arrival;
-      setIsArrivee(!hasArrival);
-      sessionStorage.setItem(storageKey, JSON.stringify(!hasArrival));
-    } catch (err) {
-      console.error("Erreur lors de la vérification du statut :", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const fetchHistorique = async () => {
     try {
@@ -65,43 +47,30 @@ function Presence() {
       setFilteredHistorique(historiqueWithPeriod);
     } catch (err) {
       console.error("Erreur lors du chargement de l'historique :", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (employeId) {
-      checkPresenceStatus();
       fetchHistorique();
     }
   }, [employeId]);
 
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === storageKey && e.newValue !== null) {
-        setIsArrivee(JSON.parse(e.newValue));
-      }
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [storageKey]);
-
-  // ✅ Détermination de la période active et vérification des plages horaires
+  // ✅ Détermination de la période active
   useEffect(() => {
     const checkCurrentPeriod = () => {
       const now = new Date();
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
       
-      // Définition des plages horaires
       const periods = {
-        'arrivee-matin': [7 * 60 + 30, 8 * 60 + 30],      // 07:30 - 08:30
-        'depart-matin': [11 * 60 + 45, 12 * 60 + 30],     // 11:45 - 12:30
-        'arrivee-apresmidi': [14 * 60 + 30, 15 * 60 + 30], // 14:30 - 15:30
-        'depart-apresmidi': [17 * 60 + 45, 18 * 60 + 30],  // 17:45 - 18:30
+        'arrivee-matin': [7 * 60 + 30, 8 * 60 + 30],
+        'depart-matin': [11 * 60 + 45, 12 * 60 + 30],
+        'arrivee-apresmidi': [14 * 60 + 30, 15 * 60 + 30],
+        'depart-apresmidi': [17 * 60 + 45, 18 * 60 + 30],
       };
 
-      // Déterminer dans quelle période nous sommes
       let activePeriod = null;
       for (const [periodName, [start, end]] of Object.entries(periods)) {
         if (currentMinutes >= start && currentMinutes <= end) {
@@ -114,7 +83,7 @@ function Presence() {
     };
 
     checkCurrentPeriod();
-    const interval = setInterval(checkCurrentPeriod, 30000); // Vérifie toutes les 30s
+    const interval = setInterval(checkCurrentPeriod, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -140,24 +109,11 @@ function Presence() {
       });
 
       Swal.fire("✅", "Arrivée enregistrée avec succès !", "success");
-      setIsArrivee(false);
-      sessionStorage.setItem(storageKey, JSON.stringify(false));
-      window.dispatchEvent(
-        new StorageEvent("storage", {
-          key: storageKey,
-          newValue: JSON.stringify(false),
-        })
-      );
       fetchHistorique();
 
-      // Réactiver le bouton après 3 secondes
       setTimeout(() => setIsButtonDisabledTemp(false), 3000);
     } catch (err) {
       setIsButtonDisabledTemp(false);
-      if (err.response?.status === 409) {
-        setIsArrivee(false);
-        sessionStorage.setItem(storageKey, JSON.stringify(false));
-      }
       Swal.fire("⚠️", err.response?.data?.message || "Erreur serveur", "warning");
     }
   };
@@ -179,24 +135,11 @@ function Presence() {
       });
 
       Swal.fire("👋", "Départ enregistré avec succès !", "success");
-      setIsArrivee(true);
-      sessionStorage.setItem(storageKey, JSON.stringify(true));
-      window.dispatchEvent(
-        new StorageEvent("storage", {
-          key: storageKey,
-          newValue: JSON.stringify(true),
-        })
-      );
       fetchHistorique();
 
-      // Garder le bouton désactivé après le départ (il se réactivera automatiquement à 07h30 le lendemain)
       setTimeout(() => setIsButtonDisabledTemp(false), 3000);
     } catch (err) {
       setIsButtonDisabledTemp(false);
-      if (err.response?.status === 404) {
-        setIsArrivee(true);
-        sessionStorage.setItem(storageKey, JSON.stringify(true));
-      }
       Swal.fire("⚠️", err.response?.data?.message || "Erreur serveur", "warning");
     }
   };
@@ -207,25 +150,23 @@ function Presence() {
       selector: (row) => new Date(row.date_presence).toLocaleDateString(),
       sortable: true,
     },
-    {
-      name: "Période",
-      selector: (row) =>
-        row.heure_arrivee && row.heure_arrivee < "12:00" ? "Matin" : "Après-midi",
-      sortable: true,
-    },
+      { name: "Période", selector: (row) => row.periode || "—", center: true },
     { name: "Heure d'arrivée", selector: (row) => row.heure_arrivee || "--:--" },
-    {
+     {
       name: "Statut",
-      selector: (row) => row.statut_presence,
-      cell: (row) => (
-        <span
-          className={`statut-badge ${row.statut_presence
-            .toLowerCase()
-            .replace(" ", "-")}`}
-        >
-          {row.statut_presence}
-        </span>
-      ),
+      selector: (row) => row.statut_presence || "—",
+      center: true,
+      cell: (row) => {
+        const cls = row.statut_presence
+          ? row.statut_presence.toLowerCase().trim().replace(/\s+/g, "-")
+          : "inconnu";
+
+        return (
+          <span className={`statut-badge ${cls}`}>
+            {row.statut_presence || "—"}
+          </span>
+        );
+      }
     },
     { name: "Heure de départ", selector: (row) => row.heure_depart || "--:--" },
   ];
@@ -261,70 +202,82 @@ function Presence() {
   const currentHour = now.getHours();
   const currentPeriod = currentHour < 14 ? "matin" : "apresmidi";
 
-  // Recherche de l'enregistrement d'arrivée pour la période en cours
-  const presenceTodayPeriod = historique.find(
-    (item) => item.date_presence === today && item.periode === currentPeriod
+  // ✅ Recherche des enregistrements du jour pour CHAQUE période
+  const presenceMatin = historique.find(
+    (item) => item.date_presence === today && item.periode === "matin"
+  );
+  
+  const presenceApresMidi = historique.find(
+    (item) => item.date_presence === today && item.periode === "apresmidi"
   );
 
-  // ✅ LOGIQUE DE DÉSACTIVATION COMPLÈTE
+  // ✅ Sélection de l'enregistrement de la période actuelle
+  const presenceTodayPeriod = currentPeriod === "matin" ? presenceMatin : presenceApresMidi;
+
+  // ✅ DÉTERMINATION DU MODE DU BOUTON (Arrivée ou Départ)
+  const isArrivee = !presenceTodayPeriod?.heure_arrivee;
+
+  // ✅ LOGIQUE DE DÉSACTIVATION AMÉLIORÉE
   let isDisabled = false;
   let disabledReason = "";
 
-  // 1. Désactivation temporaire après un clic (anti-clic accidentel)
   if (isButtonDisabledTemp) {
     isDisabled = true;
     disabledReason = "Veuillez patienter...";
   }
-  // 2. Si on est en dehors de toutes les plages horaires
   else if (!currentPeriodType) {
     isDisabled = true;
     disabledReason = "Hors plage horaire autorisée";
   }
-  // 3. Mode ARRIVÉE
   else if (isArrivee) {
-    // Si on est dans une période de départ mais le bouton est en mode arrivée
+    // ========== MODE ARRIVÉE ==========
     if (currentPeriodType.startsWith('depart')) {
+      // On est dans une période de départ, mais pas d'arrivée enregistrée
       isDisabled = true;
-      disabledReason = "Période de départ uniquement";
+      disabledReason = "Vous devez d'abord enregistrer votre arrivée";
     }
-    // Si une arrivée est déjà enregistrée pour cette période
     else if (presenceTodayPeriod?.heure_arrivee) {
+      // Arrivée déjà enregistrée pour cette période
       isDisabled = true;
-      disabledReason = "Arrivée déjà enregistrée";
+      disabledReason = "Arrivée déjà enregistrée pour cette période";
     }
   }
-  // 4. Mode DÉPART
   else {
-    // Si on est dans une période d'arrivée mais le bouton est en mode départ
+    // ========== MODE DÉPART ==========
     if (currentPeriodType.startsWith('arrivee')) {
+      // On est dans une période d'arrivée mais une arrivée existe déjà
       isDisabled = true;
-      disabledReason = "Période d'arrivée uniquement";
+      disabledReason = "En attente de la période de départ";
     }
-    // Si aucune arrivée n'est enregistrée pour cette période
     else if (!presenceTodayPeriod?.heure_arrivee) {
+      // Cas critique : période de départ mais pas d'arrivée
+      // Ce cas ne devrait jamais se produire vu la logique ci-dessus
       isDisabled = true;
-      disabledReason = "Aucune arrivée enregistrée";
+      disabledReason = "Aucune arrivée enregistrée pour cette période";
     }
-    // Si un départ est déjà enregistré pour cette période
     else if (presenceTodayPeriod?.heure_depart) {
+      // Départ déjà enregistré
       isDisabled = true;
-      disabledReason = "Départ déjà enregistré";
+      disabledReason = "Départ déjà enregistré pour cette période";
     }
   }
 
   return (
-    <div className="presence-container">
+    <div className="container">
       <h2>Suivi de Présence</h2>
       <div className="user-info">
         <p>
           Connecté en tant que :{" "}
           <strong>{userData?.nom || "Utilisateur"}</strong>
         </p>
+        <p style={{ fontSize: '0.9em', color: '#666' }}>
+          Période actuelle : <strong>{currentPeriod === 'matin' ? 'Matin' : 'Après-midi'}</strong>
+        </p>
       </div>
       
       <button
         onClick={isArrivee ? handleArrivee : handleDepart}
-        className={`btn-presence ${isArrivee ? "btn-arrivee" : "btn-depart"}`}
+        className={`btn-pre ${isArrivee ? "btn-arrivee" : "btn-depart"}`}
         disabled={isDisabled}
         style={{
           opacity: isDisabled ? 0.6 : 1,
@@ -335,7 +288,6 @@ function Presence() {
         {isArrivee ? "🟢 Enregistrer Arrivée" : "🔴 Enregistrer Départ"}
       </button>
 
-      {/* Message d'information sur l'état actuel */}
       {isDisabled && disabledReason && (
         <div style={{ 
           marginTop: '10px', 

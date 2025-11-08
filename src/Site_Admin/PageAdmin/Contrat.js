@@ -43,12 +43,12 @@ export default function Contrat() {
     };
     fetchContrats();
   }, []);
-
+const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') : "N/A");
   const columns = [
     { name: "Employé", selector: (row) => row.employe.nom_employe + " " + row.employe.prenom_employe, sortable: true },
     { name: "Type", selector: (row) => row.type_contrat },
-    { name: "Date Début", selector: (row) => row.date_debut_contrat },
-    { name: "Date Fin", selector: (row) => row.date_fin_contrat },
+    { name: "Date Début", selector: (row) => formatDate(row.date_debut_contrat) },
+    { name: "Date Fin", selector: (row) => formatDate(row.date_fin_contrat) },
     { name: "Statut", selector: (row) => row.statut_contrat },
     {
       name: "Actions",

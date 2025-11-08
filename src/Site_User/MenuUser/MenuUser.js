@@ -57,7 +57,7 @@ useEffect(() => {
   const menuItems = [
     { path: "/user/dashboard", label: "Profil", icon: <FaHome /> },
     { path: "/user/dashboard/presence", label: "Présence", icon: <FaUserCheck /> },
-    { path: "/user/dashboard/absence", label: "Absence", icon: <FaUserTimes /> },
+    { path: "/user/dashboard/absence", label: "Demande d'Absence", icon: <FaUserTimes /> },
     { path: "/user/dashboard/notifications", label: "Notifications", icon: <FaBell /> },
   ];
 

@@ -15,7 +15,7 @@ export default function Login() {
   try {
     const res = await axios.post("http://127.0.0.1:8000/api/login", {
       email,
-      password,
+      password,  
     });
 
     // Stocker les infos de l'utilisateur dans la session

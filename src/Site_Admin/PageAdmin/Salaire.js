@@ -2,11 +2,30 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
-import "../../StyleCss/Salaire.css";
+import { FaSearch, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import "../../StyleCss/Crud.css";
 
 function Salaire() {
   const [salaires, setSalaires] = useState([]);
   const [employes, setEmployes] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedSalaire, setSelectedSalaire] = useState(null);
+  const [formData, setFormData] = useState({
+    mois_salaire: "",
+    annee_salaire: "",
+    employe_id: "",
+    salaire_base: "",
+    primes_salaire: 0,
+    retenues_salaire: 0,
+    cnaps: 0,
+    medical: 0,
+    irsa: 0,
+    salaire_net: 0,
+    calcul_auto_retenues: false,
+  });
+  const [retenuesInfo, setRetenuesInfo] = useState("");
 
   useEffect(() => {
     fetchSalaires();
@@ -31,190 +50,189 @@ function Salaire() {
     }
   };
 
-  // Ouvrir la modale pour ajouter un salaire
-  const handleAddSalaire = async () => {
-    const { value: formValues } = await Swal.fire({
-      title: "Ajouter un Salaire",
-      html: `
-        <div style="text-align: left; padding: 10px;">
-          <label style="font-weight: bold;">Mois</label>
-          <input id="mois" type="text" class="swal2-input" placeholder="Mois (ex: Janvier)" />
-          
-          <label style="font-weight: bold;">Année</label>
-          <input id="annee" type="number" class="swal2-input" placeholder="Année" />
-          
-          <label style="font-weight: bold;">Employé</label>
-          <select id="employe" class="swal2-select">
-            <option value="">-- Choisir un employé --</option>
-            ${employes
-              .map(
-                (emp) =>
-                  `<option value="${emp.id_employe}" data-salaire="${emp.salaire_base_employe}">
-                    ${emp.nom_employe} ${emp.prenom_employe}
-                  </option>`
-              )
-              .join("")}
-          </select>
-          
-          <label style="font-weight: bold;">Salaire de base</label>
-          <input id="salaire_base" type="number" class="swal2-input" placeholder="Salaire de base" readonly />
-          
-          <label style="font-weight: bold;">Primes</label>
-          <input id="primes" type="number" class="swal2-input" placeholder="Primes" value="0" />
-          
-          <div style="margin: 15px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-            <label style="display: flex; align-items: center; cursor: pointer;">
-              <input type="checkbox" id="calcul_auto" style="margin-right: 10px; width: 20px; height: 20px;" />
-              <span style="font-weight: bold;">Calculer automatiquement les retenues (absences/retards)</span>
-            </label>
-          </div>
-          
-          <label style="font-weight: bold;">Retenues</label>
-          <input id="retenues" type="number" class="swal2-input" placeholder="Retenues" value="0" />
-          <small id="retenues_info" style="color: #666; display: none; margin-top: 5px;"></small>
-          
-          <label style="font-weight: bold;">Salaire net</label>
-          <input id="salaire_net" type="number" class="swal2-input" placeholder="Salaire net" readonly />
-        </div>
-      `,
-      width: '600px',
-      didOpen: () => {
-        const employeSelect = document.getElementById("employe");
-        const salaireBaseInput = document.getElementById("salaire_base");
-        const primesInput = document.getElementById("primes");
-        const retenuesInput = document.getElementById("retenues");
-        const salaireNetInput = document.getElementById("salaire_net");
-        const calculAutoCheckbox = document.getElementById("calcul_auto");
-        const moisInput = document.getElementById("mois");
-        const anneeInput = document.getElementById("annee");
-        const retenuesInfo = document.getElementById("retenues_info");
 
-        // Lorsqu'on choisit un employé → remplir salaire de base
-        employeSelect.addEventListener("change", () => {
-          const selected = employeSelect.options[employeSelect.selectedIndex];
-          salaireBaseInput.value = selected.getAttribute("data-salaire") || "";
-          calculSalaireNet();
-          
-          // Si calcul auto activé, recalculer les retenues
-          if (calculAutoCheckbox.checked) {
-            calculerRetenuesAuto();
-          }
-        });
 
-        // Calcul automatique des retenues basé sur les absences/retards
-        const calculerRetenuesAuto = async () => {
-          const employe_id = employeSelect.value;
-          const mois = moisInput.value;
-          const annee = anneeInput.value;
-          const salaire_base = salaireBaseInput.value;
+  
 
-          if (!employe_id || !mois || !annee || !salaire_base) {
-            return;
-          }
+  // Calcul du salaire net
+  const calculSalaireNet = (base, primes, retenues, cnaps, medical, irsa) => {
+    const salaireBrut = parseFloat(base || 0) + parseFloat(primes || 0);
+    return salaireBrut - parseFloat(cnaps || 0) - parseFloat(medical || 0) - parseFloat(irsa || 0) - parseFloat(retenues || 0);
+  };
 
-          try {
-            const response = await axios.post(
-              "http://localhost:8000/api/salaires/calculer-retenues-preview",
-              { employe_id, mois_salaire: mois, annee_salaire: annee, salaire_base }
-            );
+  // Calculer automatiquement les retenues
+  const calculerRetenuesAuto = async () => {
+  const { employe_id, mois_salaire, annee_salaire, salaire_base } = formData;
 
-            const data = response.data;
-            retenuesInput.value = data.total_retenues;
-            retenuesInput.readOnly = true;
-            
-            // Afficher les détails
-            retenuesInfo.style.display = "block";
-            retenuesInfo.innerHTML = `
-              📊 Détails: ${data.nb_absences} absence(s) + ${data.nb_retards} retard(s) = ${data.total_retenues} Ar
-            `;
-            
-            calculSalaireNet();
-          } catch (error) {
-            console.error("Erreur calcul retenues:", error);
-            retenuesInput.readOnly = false;
-            retenuesInfo.style.display = "block";
-            retenuesInfo.innerHTML = `❌ Erreur lors du calcul automatique`;
-            retenuesInfo.style.color = "red";
-          }
-        };
+  if (!employe_id || !mois_salaire || !annee_salaire || !salaire_base) return;
 
-        // Toggle calcul automatique
-        calculAutoCheckbox.addEventListener("change", () => {
-          if (calculAutoCheckbox.checked) {
-            calculerRetenuesAuto();
-          } else {
-            retenuesInput.readOnly = false;
-            retenuesInput.value = 0;
-            retenuesInfo.style.display = "none";
-            calculSalaireNet();
-          }
-        });
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/api/salaires/calculer-retenues-preview",
+      { employe_id, mois_salaire, annee_salaire, salaire_base }
+    );
 
-        // Recalculer si changement de mois/année avec calcul auto activé
-        moisInput.addEventListener("change", () => {
-          if (calculAutoCheckbox.checked) calculerRetenuesAuto();
-        });
+    const data = response.data;
+    const retenues = data.total_retenues;
+
+    setFormData(prev => ({
+      ...prev,
+      retenues_salaire: retenues,
+      salaire_net: calculSalaireNet(prev.salaire_base, prev.primes_salaire, retenues, prev.cnaps, prev.medical, prev.irsa)
+    }));
+
+    setRetenuesInfo(`📊 Détails: ${data.nb_absences} absence(s) + ${data.nb_retards} retard(s) = ${retenues} Ar`);
+  } catch (error) {
+    console.error("Erreur calcul retenues:", error);
+    setRetenuesInfo("❌ Erreur lors du calcul automatique");
+  }
+};
+
+
+  // Gérer les changements du formulaire
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value
+      };
+
+      // Recalculer le salaire net si n'importe quelle valeur change
+      if (name === "salaire_base" || name === "primes_salaire" || 
+          name === "retenues_salaire" || name === "cnaps" || 
+          name === "medical" || name === "irsa") {
+        const base = name === "salaire_base" ? value : prev.salaire_base;
+        const primes = name === "primes_salaire" ? value : prev.primes_salaire;
+        const retenues = name === "retenues_salaire" ? value : prev.retenues_salaire;
+        const cnaps = name === "cnaps" ? value : prev.cnaps;
+        const medical = name === "medical" ? value : prev.medical;
+        const irsa = name === "irsa" ? value : prev.irsa;
         
-        anneeInput.addEventListener("change", () => {
-          if (calculAutoCheckbox.checked) calculerRetenuesAuto();
-        });
-
-        // Calcul du salaire net
-        const calculSalaireNet = () => {
-          const base = parseFloat(salaireBaseInput.value || 0);
-          const primes = parseFloat(primesInput.value || 0);
-          const retenues = parseFloat(retenuesInput.value || 0);
-          salaireNetInput.value = base + primes - retenues;
-        };
-
-        primesInput.addEventListener("input", calculSalaireNet);
-        retenuesInput.addEventListener("input", () => {
-          if (!calculAutoCheckbox.checked) {
-            calculSalaireNet();
-          }
-        });
-      },
-      focusConfirm: false,
-      preConfirm: () => {
-        const mois = document.getElementById("mois").value;
-        const annee = document.getElementById("annee").value;
-        const employe_id = document.getElementById("employe").value;
-        const salaire_base = document.getElementById("salaire_base").value;
-        const primes_salaire = document.getElementById("primes").value || 0;
-        const retenues_salaire = document.getElementById("retenues").value || 0;
-        const salaire_net = document.getElementById("salaire_net").value;
-        const calcul_auto = document.getElementById("calcul_auto").checked;
-
-        if (!mois || !annee || !employe_id || !salaire_base) {
-          Swal.showValidationMessage("Veuillez remplir tous les champs obligatoires");
-          return false;
-        }
-
-        return {
-          mois_salaire: mois,
-          annee_salaire: parseInt(annee),
-          salaire_base: parseFloat(salaire_base),
-          primes_salaire: parseFloat(primes_salaire),
-          retenues_salaire: parseFloat(retenues_salaire),
-          salaire_net: parseFloat(salaire_net),
-          employe_id: parseInt(employe_id),
-          calcul_auto_retenues: calcul_auto,
-        };
-      },
-    });
-
-    if (formValues) {
-      try {
-        console.log("Données envoyées:", formValues);
-        const response = await axios.post("http://localhost:8000/api/salaires", formValues);
-        console.log("Réponse:", response.data);
-        Swal.fire("Succès", "Salaire ajouté avec succès", "success");
-        fetchSalaires();
-      } catch (error) {
-        console.error("Erreur complète:", error.response?.data);
-        const errorMsg = error.response?.data?.message || "Impossible d'ajouter le salaire";
-        Swal.fire("Erreur", errorMsg, "error");
+        newData.salaire_net = calculSalaireNet(base, primes, retenues, cnaps, medical, irsa);
       }
+
+      return newData;
+    });
+  };
+
+  // Gérer le changement d'employé
+  const handleEmployeChange = (e) => {
+    const employe_id = e.target.value;
+    const selectedEmploye = employes.find(emp => emp.id_employe === parseInt(employe_id));
+    
+    if (selectedEmploye) {
+      const base = selectedEmploye.salaire_base_employe;
+      
+      setFormData(prev => ({
+        ...prev,
+        employe_id,
+        salaire_base: base,
+        salaire_net: calculSalaireNet(base, prev.primes_salaire, prev.retenues_salaire, prev.cnaps, prev.medical, prev.irsa)
+      }));
+    }
+  };
+
+  // Gérer le toggle du calcul automatique
+  const handleCalculAutoToggle = (e) => {
+    const checked = e.target.checked;
+    setFormData(prev => ({ ...prev, calcul_auto_retenues: checked }));
+    
+    if (checked) {
+      calculerRetenuesAuto();
+    } else {
+      setRetenuesInfo("");
+      setFormData(prev => ({
+        ...prev,
+        retenues_salaire: 0,
+        salaire_net: calculSalaireNet(prev.salaire_base, prev.primes_salaire, 0, prev.cnaps, prev.medical, prev.irsa)
+      }));
+    }
+  };
+
+  // Ouvrir la modale
+  const handleAddSalaire = () => {
+    setFormData({
+      mois_salaire: "",
+      annee_salaire: "",
+      employe_id: "",
+      salaire_base: "",
+      primes_salaire: 0,
+      retenues_salaire: 0,
+      cnaps: 0,
+      medical: 0,
+      irsa: 0,
+      salaire_net: 0,
+      calcul_auto_retenues: false,
+    });
+    setRetenuesInfo("");
+    setShowModal(true);
+  };
+
+  // Voir les détails
+  const handleViewDetails = (salaire) => {
+    setSelectedSalaire(salaire);
+    setShowDetailModal(true);
+  };
+
+  // Fermer les modales
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedSalaire(null);
+  };
+
+  // Soumettre le formulaire
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.mois_salaire || !formData.annee_salaire || !formData.employe_id || !formData.salaire_base) {
+      Swal.fire("Erreur", "Veuillez remplir tous les champs obligatoires", "error");
+      return;
+    }
+
+    try {
+      const dataToSend = {
+        ...formData,
+        annee_salaire: parseInt(formData.annee_salaire),
+        salaire_base: parseFloat(formData.salaire_base),
+        primes_salaire: parseFloat(formData.primes_salaire),
+        retenues_salaire: parseFloat(formData.retenues_salaire),
+        cnaps: parseFloat(formData.cnaps),
+        medical: parseFloat(formData.medical),
+        irsa: parseFloat(formData.irsa),
+        salaire_net: parseFloat(formData.salaire_net),
+        employe_id: parseInt(formData.employe_id),
+      };
+
+      console.log("📤 Données envoyées:", dataToSend);
+
+      const response = await axios.post("http://localhost:8000/api/salaires", dataToSend);
+      console.log("✅ Réponse:", response.data);
+      
+      Swal.fire("Succès", "Salaire ajouté avec succès", "success");
+      fetchSalaires();
+      handleCloseModal();
+    } catch (error) {
+      console.error("❌ Erreur complète:", error);
+      console.error("📋 Détails erreur:", error.response?.data);
+      console.error("🔴 Status:", error.response?.status);
+      
+      const errorMsg = error.response?.data?.message || 
+                      error.response?.data?.error ||
+                      JSON.stringify(error.response?.data) ||
+                      "Impossible d'ajouter le salaire";
+      
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: errorMsg,
+        footer: error.response?.status ? `Code erreur: ${error.response.status}` : ''
+      });
     }
   };
 
@@ -235,45 +253,347 @@ function Salaire() {
     });
   };
 
+  // Filtrage des salaires
+  const filteredSalaires = salaires.filter((salaire) => {
+    const searchLower = searchText.toLowerCase();
+    const employeName = salaire.employe 
+      ? `${salaire.employe.nom_employe} ${salaire.employe.prenom_employe}`.toLowerCase()
+      : "";
+    
+    return (
+      salaire.mois_salaire.toLowerCase().includes(searchLower) ||
+      salaire.annee_salaire.toString().includes(searchLower) ||
+      employeName.includes(searchLower)
+    );
+  });
+
   // Colonnes du tableau
   const columns = [
-    { name: "Mois", selector: (row) => row.mois_salaire, sortable: true },
-    { name: "Année", selector: (row) => row.annee_salaire, sortable: true },
-    { name: "Salaire Base", selector: (row) => `${row.salaire_base} Ar`, sortable: true },
-    { name: "Primes", selector: (row) => `${row.primes_salaire} Ar` },
-    { name: "Retenues", selector: (row) => `${row.retenues_salaire} Ar` },
-    { name: "Salaire Net", selector: (row) => `${row.salaire_net} Ar`, sortable: true },
-    {
+    { name: "Mois", selector: (row) => row.mois_salaire, sortable: true, width: "100px" },
+    { name: "Année", selector: (row) => row.annee_salaire, sortable: true, width: "80px" },
+    { 
       name: "Employé",
       selector: (row) =>
         row.employe ? `${row.employe.nom_employe} ${row.employe.prenom_employe}` : "N/A",
       sortable: true,
+      width: "150px"
     },
+    { name: "Salaire Base", selector: (row) => `${row.salaire_base} Ar`, sortable: true, width: "120px" },
+    { name: "Primes", selector: (row) => `${row.primes_salaire} Ar`, width: "100px" },
+    { name: "CNAPS", selector: (row) => `${row.cnaps || 0} %`, width: "100px" },
+    { name: "Médical", selector: (row) => `${row.medical || 0} %`, width: "100px" },
+    { name: "IRSA", selector: (row) => `${row.irsa || 0} %`, width: "100px" },
+    { name: "Retenues", selector: (row) => `${row.retenues_salaire} Ar`, width: "100px" },
+    { name: "Salaire Net", selector: (row) => `${row.salaire_net} Ar`, sortable: true, width: "120px" },
     {
       name: "Actions",
       cell: (row) => (
-        <button className="btn-delete" onClick={() => handleDelete(row.id_salaire)}>
-          Supprimer
-        </button>
+        <div className="crud-actions-buttons">
+          <button 
+            className="crud-btn-icon view" 
+            onClick={() => handleViewDetails(row)}
+            title="Voir détails"
+          >
+            <FaEye size={16} />
+          </button>
+          <button 
+            className="crud-btn-icon delete" 
+            onClick={() => handleDelete(row.id_salaire)}
+            title="Supprimer"
+          >
+            <FaTrash size={16} />
+          </button>
+        </div>
       ),
+      width: "100px"
     },
   ];
 
   return (
-    <div className="salaire-container">
-      <h1>Gestion des Salaires</h1>
-      <button className="btn-add" onClick={handleAddSalaire}>
-        Ajouter un Salaire
-      </button>
+    <div className="crud-container">
+      <div className="crud-header">
+        <h1 className="crud-table-title">Gestion des Salaires</h1>
+        <button className="crud-add-btn" onClick={handleAddSalaire}>
+          + Ajouter un Salaire
+        </button>
+      </div>
 
-      <DataTable
-        title="Liste des Salaires"
-        columns={columns}
-        data={salaires}
-        pagination
-        highlightOnHover
-        striped
-      />
+      {/* Barre de recherche */}
+      <div className="crud-search-bar">
+        <FaSearch className="search-icon" />
+        <input
+          type="text"
+          placeholder="Rechercher par mois, année ou employé..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+      </div>
+
+      <div className="crud-table-container">
+        <DataTable
+          columns={columns}
+          data={filteredSalaires}
+          pagination
+          highlightOnHover
+          striped
+          noDataComponent="Aucun salaire trouvé"
+          paginationComponentOptions={{
+            rowsPerPageText: 'Lignes par page:',
+            rangeSeparatorText: 'de',
+          }}
+        />
+      </div>
+
+      {/* Modale Ajout Salaire */}
+      {showModal && (
+        <div className="crud-modal-overlay" onClick={handleCloseModal}>
+          <div className="crud-modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+            <span className="crud-close-btn" onClick={handleCloseModal}>
+              &times;
+            </span>
+
+            <div className="crud-card">
+              <div className="crud-card-header">
+                <h2>Ajouter un Salaire</h2>
+                <p>Remplissez les informations du salaire</p>
+              </div>
+
+              <form className="crud-form" onSubmit={handleSubmit}>
+                <div className="crud-form-group">
+                  <label>Mois *</label>
+                  <select
+                    name="mois_salaire"
+                    value={formData.mois_salaire}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="">-- Sélectionner un mois --</option>
+                    <option value="Janvier">Janvier</option>
+                    <option value="Février">Février</option>
+                    <option value="Mars">Mars</option>
+                    <option value="Avril">Avril</option>
+                    <option value="Mai">Mai</option>
+                    <option value="Juin">Juin</option>
+                    <option value="Juillet">Juillet</option>
+                    <option value="Août">Août</option>
+                    <option value="Septembre">Septembre</option>
+                    <option value="Octobre">Octobre</option>
+                    <option value="Novembre">Novembre</option>
+                    <option value="Décembre">Décembre</option>
+                  </select>
+                </div>
+
+                <div className="crud-form-group">
+                  <label>Année *</label>
+                  <input
+                    type="number"
+                    name="annee_salaire"
+                    placeholder="Année"
+                    value={formData.annee_salaire}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="crud-form-group">
+                  <label>Employé *</label>
+                  <select
+                    name="employe_id"
+                    value={formData.employe_id}
+                    onChange={handleEmployeChange}
+                    required
+                  >
+                    <option value="">-- Choisir un employé --</option>
+                    {employes.map((emp) => (
+                      <option key={emp.id_employe} value={emp.id_employe}>
+                        {emp.nom_employe} {emp.prenom_employe}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="crud-form-group">
+                  <label>Salaire de base *</label>
+                  <input
+                    type="number"
+                    name="salaire_base"
+                    placeholder="Salaire de base"
+                    value={formData.salaire_base}
+                    readOnly
+                  />
+                </div>
+
+                <div className="crud-form-group">
+                  <label>Primes</label>
+                  <input
+                    type="number"
+                    name="primes_salaire"
+                    placeholder="Primes"
+                    value={formData.primes_salaire}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="crud-form-group">
+                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      name="calcul_auto_retenues"
+                      checked={formData.calcul_auto_retenues}
+                      onChange={handleCalculAutoToggle}
+                      style={{ marginRight: '10px', width: '20px', height: '20px' }}
+                    />
+                    <span>Calculer automatiquement les retenues (absences/retards)</span>
+                  </label>
+                </div>
+
+                <div className="crud-form-group">
+                  <label>Retenues</label>
+                  <input
+                    type="number"
+                    name="retenues_salaire"
+                    placeholder="Retenues"
+                    value={formData.retenues_salaire}
+                    onChange={handleInputChange}
+                    readOnly={formData.calcul_auto_retenues}
+                  />
+                  {retenuesInfo && (
+                    <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                      {retenuesInfo}
+                    </small>
+                  )}
+                </div>
+
+                <div className="crud-form-group">
+                  <label>CNAPS (1%)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="cnaps"
+                    placeholder="CNAPS"
+                    value={formData.cnaps}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="crud-form-group">
+                  <label>Cotisation Médicale (1%)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="medical"
+                    placeholder="Médical"
+                    value={formData.medical}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="crud-form-group">
+                  <label>IRSA</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="irsa"
+                    placeholder="IRSA"
+                    value={formData.irsa}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="crud-form-group">
+                  <label>Salaire net</label>
+                  <input
+                    type="number"
+                    name="salaire_net"
+                    placeholder="Salaire net"
+                    value={formData.salaire_net}
+                    readOnly
+                    style={{ fontWeight: 'bold', fontSize: '16px' }}
+                  />
+                </div>
+
+                <div className="crud-form-actions">
+                  <button type="button" className="crud-cancel-btn" onClick={handleCloseModal}>
+                    Annuler
+                  </button>
+                  <button type="submit" className="crud-submit-btn">
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modale Détails Salaire */}
+      {showDetailModal && selectedSalaire && (
+        <div className="crud-modal-overlay" onClick={handleCloseDetailModal}>
+          <div className="crud-modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+            <span className="crud-close-btn" onClick={handleCloseDetailModal}>
+              &times;
+            </span>
+
+            <div className="crud-card">
+              <div className="crud-card-header">
+                <h2>📋 Détails du Salaire</h2>
+                <p>{selectedSalaire.mois_salaire} {selectedSalaire.annee_salaire}</p>
+              </div>
+
+              <div style={{ padding: '20px' }}>
+                <div style={{ marginBottom: '20px' }}>
+                  <h3 style={{ fontSize: '16px', marginBottom: '10px', color: '#333' }}>
+                    👤 {selectedSalaire.employe?.nom_employe} {selectedSalaire.employe?.prenom_employe}
+                  </h3>
+                </div>
+
+                <div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
+                  <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#555' }}>💵 Rémunération</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e0e0e0' }}>
+                    <span>Salaire de base:</span>
+                    <strong>{selectedSalaire.salaire_base} Ar</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e0e0e0' }}>
+                    <span>Primes:</span>
+                    <strong>{selectedSalaire.primes_salaire} Ar</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', fontWeight: 'bold', color: '#2563eb' }}>
+                    <span>Salaire brut:</span>
+                    <span>{(parseFloat(selectedSalaire.salaire_base) + parseFloat(selectedSalaire.primes_salaire)).toFixed(2)} Ar</span>
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: '#fff3cd', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
+                  <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#856404' }}>📉 Déductions</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ffc107' }}>
+                    <span>CNAPS (1%):</span>
+                    <strong>{selectedSalaire.cnaps || 0} Ar</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ffc107' }}>
+                    <span>Médical (1%):</span>
+                    <strong>{selectedSalaire.medical || 0} Ar</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ffc107' }}>
+                    <span>IRSA:</span>
+                    <strong>{selectedSalaire.irsa || 0} Ar</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
+                    <span>Retenues:</span>
+                    <strong>{selectedSalaire.retenues_salaire} Ar</strong>
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: '#d1fae5', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
+                  <h4 style={{ fontSize: '14px', marginBottom: '5px', color: '#065f46' }}>✅ Salaire Net à Payer</h4>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#059669' }}>
+                    {selectedSalaire.salaire_net} Ar
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

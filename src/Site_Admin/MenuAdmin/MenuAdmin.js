@@ -13,6 +13,7 @@ import {
   FaSignOutAlt,
   FaMoneyBillWave,
   FaFileInvoiceDollar,
+  FaCalendarCheck,
 } from "react-icons/fa";
 import "../../StyleCss/Menu.css";
 
@@ -34,12 +35,14 @@ function MenuAdmin() {
   const menuItems = [
     { path: "/admin/dashboard", label: "Accueil", icon: <FaHome /> },
     { path: "/admin/dashboard/users", label: "Users", icon: <FaUsers /> },
+    // Employés sera inséré ici via le code JSX
     { path: "/admin/dashboard/services", label: "Services", icon: <FaBuilding /> },
     { path: "/admin/dashboard/contrats", label: "Contrats", icon: <FaFileContract /> },
     { path: "/admin/dashboard/presences", label: "Présences", icon: <FaUserCheck /> },
     { path: "/admin/dashboard/absences", label: "Absences", icon: <FaUserTimes /> },
     { path: "/admin/dashboard/salaires", label: "Salaire", icon: <FaMoneyBillWave /> },
     { path: "/admin/dashboard/bulletin", label: "Bulletin", icon: <FaFileInvoiceDollar /> },
+    { path: "/admin/dashboard/conge", label: "Congés", icon: <FaCalendarCheck /> },
   ];
 
   const handleLogout = () => {
@@ -59,12 +62,11 @@ function MenuAdmin() {
   };
 
   useEffect(() => {
-  const user = sessionStorage.getItem("user");
-  if (!user) {
-    navigate("/admin/login");
-  }
-}, [navigate]);
-
+    const user = sessionStorage.getItem("user");
+    if (!user) {
+      navigate("/admin/login");
+    }
+  }, [navigate]);
 
   return (
     <div className="admin-container">
@@ -91,21 +93,33 @@ function MenuAdmin() {
         {/* Liens du menu */}
         <nav className="menu-nav">
           <ul>
-            {/* Menu principal */}
-            {menuItems.map((item) => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={`menu-link ${
-                    location.pathname === item.path ? "active" : ""
-                  }`}
-                  title={!open ? item.label : ""}
-                >
-                  <span className="menu-icon">{item.icon}</span>
-                  {open && <span className="menu-label">{item.label}</span>}
-                </Link>
-              </li>
-            ))}
+            {/* Accueil */}
+            <li>
+              <Link
+                to="/admin/dashboard"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard" ? "active" : ""
+                }`}
+                title={!open ? "Accueil" : ""}
+              >
+                <span className="menu-icon"><FaHome /></span>
+                {open && <span className="menu-label">Accueil</span>}
+              </Link>
+            </li>
+
+            {/* Users */}
+            <li>
+              <Link
+                to="/admin/dashboard/users"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/users" ? "active" : ""
+                }`}
+                title={!open ? "Users" : ""}
+              >
+                <span className="menu-icon"><FaUsers /></span>
+                {open && <span className="menu-label">Users</span>}
+              </Link>
+            </li>
 
             {/* Sous-menu Employés */}
             <li>
@@ -148,6 +162,105 @@ function MenuAdmin() {
                   )}
                 </ul>
               )}
+            </li>
+
+            {/* Services */}
+            <li>
+              <Link
+                to="/admin/dashboard/services"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/services" ? "active" : ""
+                }`}
+                title={!open ? "Services" : ""}
+              >
+                <span className="menu-icon"><FaBuilding /></span>
+                {open && <span className="menu-label">Services</span>}
+              </Link>
+            </li>
+
+            {/* Contrats */}
+            <li>
+              <Link
+                to="/admin/dashboard/contrats"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/contrats" ? "active" : ""
+                }`}
+                title={!open ? "Contrats" : ""}
+              >
+                <span className="menu-icon"><FaFileContract /></span>
+                {open && <span className="menu-label">Contrats</span>}
+              </Link>
+            </li>
+
+            {/* Présences */}
+            <li>
+              <Link
+                to="/admin/dashboard/presences"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/presences" ? "active" : ""
+                }`}
+                title={!open ? "Présences" : ""}
+              >
+                <span className="menu-icon"><FaUserCheck /></span>
+                {open && <span className="menu-label">Présences</span>}
+              </Link>
+            </li>
+
+            {/* Absences */}
+            <li>
+              <Link
+                to="/admin/dashboard/absences"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/absences" ? "active" : ""
+                }`}
+                title={!open ? "Absences" : ""}
+              >
+                <span className="menu-icon"><FaUserTimes /></span>
+                {open && <span className="menu-label">Absences</span>}
+              </Link>
+            </li>
+
+            {/* Salaire */}
+            <li>
+              <Link
+                to="/admin/dashboard/salaires"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/salaires" ? "active" : ""
+                }`}
+                title={!open ? "Salaire" : ""}
+              >
+                <span className="menu-icon"><FaMoneyBillWave /></span>
+                {open && <span className="menu-label">Salaire</span>}
+              </Link>
+            </li>
+
+            {/* Bulletin */}
+            <li>
+              <Link
+                to="/admin/dashboard/bulletin"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/bulletin" ? "active" : ""
+                }`}
+                title={!open ? "Bulletin" : ""}
+              >
+                <span className="menu-icon"><FaFileInvoiceDollar /></span>
+                {open && <span className="menu-label">Bulletin</span>}
+              </Link>
+            </li>
+
+            
+            {/* Absences */}
+            <li>
+              <Link
+                to="/admin/dashboard/conge"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/conge" ? "active" : ""
+                }`}
+                title={!open ? "Absences" : ""}
+              >
+                <span className="menu-icon"><FaCalendarCheck /></span>
+                {open && <span className="menu-label">Congés</span>}
+              </Link>
             </li>
           </ul>
         </nav>

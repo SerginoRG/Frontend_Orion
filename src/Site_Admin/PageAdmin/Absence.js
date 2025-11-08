@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import Modal from "react-modal";
 import "../../StyleCss/AbsenceAdmin.css";
+import { FaEye } from "react-icons/fa";
 
 Modal.setAppElement('#root'); // Pour l’accessibilité
 
@@ -64,7 +65,7 @@ function Absence() {
       Swal.fire("Succès", "Le statut a été mis à jour", "success");
       fetchAbsences();
     } catch (err) {
-      Swal.fire("Erreur", "Impossible de modifier le statut", "error");
+      Swal.fire("Erreur", "Impossible de valider car vous avez atteint la limite de votre congé", "error");
     }
   };
 
@@ -79,7 +80,7 @@ function Absence() {
   };
 
   const columns = [
-    { name: "ID", selector: row => row.id_absence, sortable: true, width: "70px" },
+   
     { name: "Employé", selector: row => row.employe ? `${row.employe.nom_employe} ${row.employe.prenom_employe || ''}`.trim() : "Employé supprimé", sortable: true },
     { name: "Date Début", selector: row => formatDate(row.date_debut), sortable: true },
     { name: "Date Fin", selector: row => formatDate(row.date_fin), sortable: true },
@@ -96,13 +97,33 @@ function Absence() {
             <option value="Validée">Validée</option>
             <option value="Refusée">Refusée</option>
           </select>
-          <button className="btn-show" onClick={() => openModal(row)}>👁️</button>
+          <button className="btn-show" onClick={() => openModal(row)}>  <FaEye /></button>
         </>
       ),
       ignoreRowClick: true,
       width: "180px"
     }
   ];
+
+  // --- NOUVELLE FONCTION DE CALCUL DES JOURS ---
+const calculateDays = (dateDebut, dateFin) => {
+      if (!dateDebut || !dateFin) return "N/A";
+      
+      const start = new Date(dateDebut);
+      const end = new Date(dateFin);
+
+      // On s'assure que les dates sont valides
+      if (isNaN(start) || isNaN(end)) return "N/A";
+
+      // Calcul de la différence en millisecondes
+      const diffTime = Math.abs(end.getTime() - start.getTime());
+
+      // Conversion des millisecondes en jours (1000 ms/s * 60 s/min * 60 min/h * 24 h/j)
+      // On ajoute 1 jour car une absence du 01/01 au 01/01 est 1 jour, pas 0.
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      return diffDays;
+ };
 
   return (
     <div className="absence-admin-container">
@@ -149,6 +170,7 @@ function Absence() {
             <p><strong>Employé:</strong> {selectedAbsence.employe ? `${selectedAbsence.employe.nom_employe} ${selectedAbsence.employe.prenom_employe}` : 'Supprimé'}</p>
             <p><strong>Date Début:</strong> {formatDate(selectedAbsence.date_debut)}</p>
             <p><strong>Date Fin:</strong> {formatDate(selectedAbsence.date_fin)}</p>
+            <p><strong>Nombre de jours:</strong> {calculateDays(selectedAbsence.date_debut, selectedAbsence.date_fin)}</p>
             <p><strong>Motif:</strong> {selectedAbsence.motif_absence}</p>
             <p><strong>Statut:</strong> {selectedAbsence.statut_absence}</p>
             <p><strong>Justificatif:</strong> {selectedAbsence.justificatif ? <a href={`http://127.0.0.1:8000/storage/${selectedAbsence.justificatif}`} target="_blank" rel="noopener noreferrer">📄 Voir</a> : 'Aucun'}</p>
