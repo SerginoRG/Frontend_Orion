@@ -60,9 +60,18 @@ body {
   background-image: url("../../public/images/logo/sary.avif");
   background-size: cover;
   background-position: center;
-  border-top-right-radius: 200px;
-  border-bottom-right-radius: 200px;
+  clip-path: polygon(
+    0% 0%,
+    90% 0%,
+    100% 20%,
+    85% 100%,
+    0% 100%
+  );
 }
+
+
+
+
 
 
 /* Zone droite contenant le formulaire */
