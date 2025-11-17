@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
-import { FaSearch, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { FaSearch, FaTrash, FaEye } from "react-icons/fa";
 import "../../StyleCss/Crud.css";
 
 function Salaire() {
@@ -279,7 +279,6 @@ function Salaire() {
       width: "150px"
     },
     { name: "Salaire Base", selector: (row) => `${row.salaire_base} Ar`, sortable: true, width: "120px" },
-    { name: "Primes", selector: (row) => `${row.primes_salaire} Ar`, width: "100px" },
     { name: "CNAPS", selector: (row) => `${row.cnaps || 0} %`, width: "100px" },
     { name: "Médical", selector: (row) => `${row.medical || 0} %`, width: "100px" },
     { name: "IRSA", selector: (row) => `${row.irsa || 0} %`, width: "100px" },

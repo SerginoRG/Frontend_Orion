@@ -1,0 +1,76 @@
+/* ====== HISTORIQUE BULLETINS ====== */
+
+.table-container {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.table-title {
+  color: #1e3a8a;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Style du tableau */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.table th {
+  background-color: #e0e7ff;
+  font-weight: 600;
+  color: #111;
+  padding: 12px;
+  text-align: center;
+}
+
+.table td {
+  padding: 12px;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+}
+
+.table tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Bouton PDF */
+.btn-pdf {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-pdf:hover {
+  background-color: #1d4ed8;
+  transform: scale(1.05);
+}
+
+.btn-pdf:active {
+  transform: scale(0.95);
+}
+
+/* Lien Télécharger */
+.link-download {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link-download:hover {
+  text-decoration: underline;
+}

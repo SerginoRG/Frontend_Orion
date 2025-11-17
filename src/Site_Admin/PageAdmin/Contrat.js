@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import "../../StyleCss/Crud.css";
-import { FaEdit, FaTrash, FaSearch, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaSearch, FaPlus,FaFilePdf } from "react-icons/fa";
 
 export default function Contrat() {
   const [typeContrat, setTypeContrat] = useState("");
@@ -43,6 +43,25 @@ export default function Contrat() {
     };
     fetchContrats();
   }, []);
+  
+const generatePDF = async (id) => {
+  try {
+    const response = await axios.get(`http://127.0.0.1:8000/api/contrats/${id}/pdf`, {
+      responseType: "blob",
+    });
+
+    const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = fileURL;
+    link.download = "contrat.pdf";
+    link.click();
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Erreur", "Impossible de générer le PDF", "error");
+  }
+};
+
+
 const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') : "N/A");
   const columns = [
     { name: "Employé", selector: (row) => row.employe.nom_employe + " " + row.employe.prenom_employe, sortable: true },
@@ -60,6 +79,13 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
           <button className="crud-btn-icon delete" onClick={() => handleDelete(row.id_contrat)}>
             <FaTrash />
           </button>
+          <button
+        className="crud-btn-icon pdf"
+        onClick={() => generatePDF(row.id_contrat)}
+        title="Télécharger PDF"
+      >
+        <FaFilePdf />
+      </button>
         </div>
       ),
     },

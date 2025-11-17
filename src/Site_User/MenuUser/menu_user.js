@@ -8,9 +8,10 @@ import {
   FaUserTimes,
   FaBell,
   FaSignOutAlt,
+  FaHistory
 } from "react-icons/fa";
 import axios from "axios";
-import "../../StyleCss/Menu.css";
+import "../../StyleCss/menu.css";
 
 function MenuUser() {
   const [open, setOpen] = useState(false);
@@ -58,6 +59,7 @@ useEffect(() => {
     { path: "/user/dashboard", label: "Profil", icon: <FaHome /> },
     { path: "/user/dashboard/presence", label: "Présence", icon: <FaUserCheck /> },
     { path: "/user/dashboard/absence", label: "Demande d'Absence", icon: <FaUserTimes /> },
+    { path: "/user/dashboard/historique", label: "historique", icon: <FaHistory /> },
     { path: "/user/dashboard/notifications", label: "Notifications", icon: <FaBell /> },
   ];
 

@@ -16,7 +16,8 @@ export default function Absence() {
 
   const [absences, setAbsences] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [viewMessage, setViewMessage] = useState(""); // modal message complet
+  const [viewMessage, setViewMessage] = useState("");
+  const [messageModalOpen, setMessageModalOpen] = useState(false);
 
   const userData = JSON.parse(sessionStorage.getItem("userData"));
 
@@ -37,12 +38,10 @@ export default function Absence() {
     }
   };
 
-  // Gestion des champs du formulaire
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (name === "message") {
-      // Limiter à 20 mots
       const words = value.trim().split(/\s+/);
       if (words.length > 20) {
         setFormData({
@@ -59,7 +58,6 @@ export default function Absence() {
     });
   };
 
-  // Soumission formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -97,7 +95,6 @@ export default function Absence() {
     }
   };
 
-  // Suppression d'une absence
   const handleDelete = (id) => {
     Swal.fire({
       title: "Supprimer cette demande ?",
@@ -118,36 +115,70 @@ export default function Absence() {
     });
   };
 
-  // Tronquer le message à 20 mots pour le tableau
   const truncateMessage = (msg) => {
     if (!msg) return "";
     const words = msg.split(" ");
     if (words.length <= 20) return msg;
     return words.slice(0, 20).join(" ") + " ...";
   };
-const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') : "N/A");
+
+  const handleViewMessage = (message) => {
+    setViewMessage(message);
+    setMessageModalOpen(true);
+  };
+
+  const closeMessageModal = () => {
+    setViewMessage("");
+    setMessageModalOpen(false);
+  };
+
+  const formatDate = (date) =>
+    date ? new Date(date).toLocaleDateString("fr-FR") : "N/A";
 
   const columns = [
-    { name: "Début", selector: (row) =>  formatDate(row.date_debut), sortable: true },
-    { name: "Fin", selector: (row) =>  formatDate(row.date_fin), sortable: true },
+    { name: "Début", selector: (row) => formatDate(row.date_debut), sortable: true },
+    { name: "Fin", selector: (row) => formatDate(row.date_fin), sortable: true },
     { name: "Motif", selector: (row) => row.motif_absence },
     {
       name: "Message",
       cell: (row) => (
-        <>
-          {truncateMessage(row.message)}
-          {row.message && row.message.split(" ").length > 20 && (
-            <button
-              className="btn-view"
-              onClick={() => setViewMessage(row.message)}
-              style={{ marginLeft: "8px" }}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+       
+          
+            <button 
+              className="btn-view" 
+              onClick={() => handleViewMessage(row.message)}
+              title="Voir le message complet"
             >
               <FaEye />
             </button>
-          )}
-        </>
+          
+        </div>
       ),
     },
+    { name: "Justificatif",
+      cell: (row) =>
+      row.justificatif ? (
+      <a // <-- Missing opening <a> tag added here
+      href={`http://127.0.0.1:8000/storage/${row.justificatif}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-view-file"
+       style={{
+              color: "#667eea",
+              textDecoration: "none",
+              fontWeight: "600",
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+      >
+       <FaEye /> Voir PDF
+      </a>
+      ) : (
+      <span style={{ color: "red" }}>Aucun</span>
+      ),
+      },
     { name: "Statut", selector: (row) => row.statut_absence },
     {
       name: "Actions",
@@ -166,54 +197,35 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
           Nouvelle demande
         </button>
 
-        {/* Modal formulaire */}
+        {/* Modal Formulaire */}
         {modalOpen && (
           <div className="modal">
             <div className="modal-content">
               <span className="close" onClick={() => setModalOpen(false)}>
                 &times;
               </span>
-              <h2>Demande d’absence</h2>
+              <h2>Demande d'absence</h2>
+
               <form className="absence-form" onSubmit={handleSubmit}>
                 <label>Date de début :</label>
-                <input
-                  type="date"
-                  name="date_debut"
-                  value={formData.date_debut}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="date" name="date_debut" value={formData.date_debut} onChange={handleChange} required />
 
                 <label>Date de fin :</label>
-                <input
-                  type="date"
-                  name="date_fin"
-                  value={formData.date_fin}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="date" name="date_fin" value={formData.date_fin} onChange={handleChange} required />
 
                 <label>Motif :</label>
-                <select
-                  name="motif_absence"
-                  value={formData.motif_absence}
-                  onChange={handleChange}
-                  required
-                >
+                <select name="motif_absence" value={formData.motif_absence} onChange={handleChange} required>
                   <option value="">-- Sélectionnez un motif --</option>
-                  <option value="Congé">Congé</option>
-                  <option value="Maladie">Maladie</option>
-                  <option value="Permission">Permission</option>
-                  <option value="Autre">Autre</option>
+                  <option value="Congé">Congé annuel</option>
+                  <option value="Maladie">Congé maladie</option>
+                  <option value="Permission">Permission exceptionnelle</option>
+                  <option value="Congé maternité">Congé maternité</option>
+                  <option value="Congé paternité">Congé paternité</option>
+                  <option value="Congé pour décès">Congé pour décès</option>
                 </select>
 
                 <label>Message :</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Ajoutez un message ou une explication..."
-                />
+                <textarea name="message" value={formData.message} onChange={handleChange} />
 
                 <label>Justificatif :</label>
                 <input type="file" name="justificatif" onChange={handleChange} />
@@ -226,30 +238,28 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
           </div>
         )}
 
-        {/* Modal pour voir le message complet */}
-        {viewMessage && (
-          <div className="modal">
-            <div className="modal-content">
-              <span className="close" onClick={() => setViewMessage("")}>
+        {/* ✅ Modal pour voir le message complet */}
+        {messageModalOpen && (
+          <div className="modal-overlay" onClick={closeMessageModal}>
+            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+              <button className="close-btn" onClick={closeMessageModal}>
                 &times;
-              </span>
+              </button>
               <h3>Message complet</h3>
-              <p>{viewMessage}</p>
+              <div className="message-content">
+                <p>{viewMessage}</p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* DataTable */}
         <DataTable
           columns={columns}
           data={absences}
           pagination
-          paginationPerPage={5}
-          paginationRowsPerPageOptions={[5, 10, 15]}
           highlightOnHover
           striped
-          responsive
-          noDataComponent="Aucun enregistrement trouvé."
+          noDataComponent="Aucune absence trouvée."
         />
       </div>
     </div>

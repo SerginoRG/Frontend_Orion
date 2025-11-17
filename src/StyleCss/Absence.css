@@ -169,3 +169,110 @@
     font-size: 20px;
   }
 }
+
+/* Modal pour le message complet */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-box h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.message-content {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  line-height: 1.6;
+}
+
+.message-content p {
+  margin: 0;
+  color: #555;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.btn-view {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-view:hover {
+  background: #0056b3;
+}
+
+.statut-badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  display: inline-block;
+  color: #fff;
+}
+
+.statut-badge.en-attente {
+  background-color: #f59e0b; /* Orange */
+}
+
+.statut-badge.validée {
+  background-color: #16a34a; /* Vert */
+}
+
+.statut-badge.refusée {
+  background-color: #dc2626; /* Rouge */
+}

@@ -14,8 +14,9 @@ import {
   FaMoneyBillWave,
   FaFileInvoiceDollar,
   FaCalendarCheck,
+  FaFileAlt
 } from "react-icons/fa";
-import "../../StyleCss/Menu.css";
+import "../../StyleCss/menu.css";
 
 function MenuAdmin() {
   const [open, setOpen] = useState(false);
@@ -38,6 +39,7 @@ function MenuAdmin() {
     // Employés sera inséré ici via le code JSX
     { path: "/admin/dashboard/services", label: "Services", icon: <FaBuilding /> },
     { path: "/admin/dashboard/contrats", label: "Contrats", icon: <FaFileContract /> },
+    { path: "/admin/dashboard/articles", label: "Articles", icon: <FaFileAlt /> },
     { path: "/admin/dashboard/presences", label: "Présences", icon: <FaUserCheck /> },
     { path: "/admin/dashboard/absences", label: "Absences", icon: <FaUserTimes /> },
     { path: "/admin/dashboard/salaires", label: "Salaire", icon: <FaMoneyBillWave /> },
@@ -81,14 +83,14 @@ function MenuAdmin() {
         {open && (
           <div className="logo-container">
             <img
-              src="/images/logo/logo_orion.jpg"
+              src="/images/logo/rh_logo.png"
               alt="Logo Orion"
               className="sidebar-logo"
             />
           </div>
         )}
 
-        {open && <div className="sidebar-header">Orion</div>}
+        {open && <div className="sidebar-header">Smart</div>}
 
         {/* Liens du menu */}
         <nav className="menu-nav">
@@ -178,7 +180,21 @@ function MenuAdmin() {
               </Link>
             </li>
 
-            {/* Contrats */}
+            {/* article */}
+            <li>
+              <Link
+                to="/admin/dashboard/articles"
+                className={`menu-link ${
+                  location.pathname === "/admin/dashboard/articles" ? "active" : ""
+                }`}
+                title={!open ? "Articles" : ""}
+              >
+                <span className="menu-icon"><FaFileAlt /></span>
+                {open && <span className="menu-label">Articles</span>}
+              </Link>
+            </li>
+
+             {/* Contrats */}
             <li>
               <Link
                 to="/admin/dashboard/contrats"

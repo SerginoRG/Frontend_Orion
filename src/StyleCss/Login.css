@@ -3,7 +3,7 @@ Login.css - Version Améliorée
 -----------------------------
 Ajouts : Transitions fines, effets d'ombre plus modernes, état désactivé pour le bouton, meilleure accessibilité des couleurs.
 */
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 /* --- Variables et Utilitaires --- */
 :root {
   /* Couleurs de base */
@@ -39,11 +39,41 @@ body,
 body {
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  background: var(--bg);
+  background: var(--card);
   margin: 0;
   color: var(--text-primary); /* Définir la couleur de texte par défaut */
   line-height: 1.5;
+  font-family: 'Poppins', sans-serif;
 }
+
+/* === Layout en 2 colonnes === */
+.login-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+ 
+}
+
+/* Image gauche avec courbe */
+.login-image {
+  flex: 1;
+  background-image: url("../../public/images/logo/sary.avif");
+  background-size: cover;
+  background-position: center;
+  border-top-right-radius: 200px;
+  border-bottom-right-radius: 200px;
+}
+
+
+/* Zone droite contenant le formulaire */
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
 
 /* --- Centrage Global --- */
 .login-root {
@@ -58,7 +88,7 @@ body {
 .login-card {
   width: 100%;
   max-width: 440px; /* Légèrement plus large pour l'esthétique */
-  background: var(--card);
+  background: #4a5f7f;
   border-radius: 16px; /* Bordures plus douces */
   /* Ombre plus nette et moderne */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 4px 10px rgba(0, 0, 0, 0.03);
@@ -89,7 +119,7 @@ body {
 .login-title {
   margin: 0;
   font-size: 24px; /* Taille de titre augmentée */
-  color: var(--text-primary);
+  color: #fff;
   font-weight: 700; /* Plus d'impact */
   text-align: center;
 }

@@ -109,9 +109,6 @@ const filteredSolde = soldeList.filter((s) =>
     { name: "Jours Acquis", selector: (row) => row.jours_acquis },
     { name: "Jours Consommés", selector: (row) => row.jours_consommes },
     { name: "Jours Restants", selector: (row) => row.jours_restants },
-    { name: "Jours Permission", selector: (row) => row.jours_permission_max },
-    { name: "Permission utilises", selector: (row) => row.jours_permission_utilises },
-    { name: "Permission Restants", selector: (row) => row.jours_permission_restants },
     {
       name: "Actions",
       cell: (row) => (

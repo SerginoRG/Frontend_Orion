@@ -5,9 +5,9 @@ import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import Modal from "react-modal";
 import "../../StyleCss/AbsenceAdmin.css";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaFilePdf } from "react-icons/fa";
 
-Modal.setAppElement('#root'); // Pour l’accessibilité
+Modal.setAppElement('#root'); // Pour l'accessibilité
 
 function Absence() {
   const [absences, setAbsences] = useState([]);
@@ -65,7 +65,7 @@ function Absence() {
       Swal.fire("Succès", "Le statut a été mis à jour", "success");
       fetchAbsences();
     } catch (err) {
-      Swal.fire("Erreur", "Impossible de valider car vous avez atteint la limite de votre congé", "error");
+      Swal.fire("Erreur", "Impossible de valider car votre congé a un limite", "error");
     }
   };
 
@@ -79,14 +79,18 @@ function Absence() {
     setModalIsOpen(false);
   };
 
+  const generatePDF = (id_absence) => {
+    window.open(`http://127.0.0.1:8000/api/admin/absence/${id_absence}/pdf`, "_blank");
+  };
+
   const columns = [
-   
     { name: "Employé", selector: row => row.employe ? `${row.employe.nom_employe} ${row.employe.prenom_employe || ''}`.trim() : "Employé supprimé", sortable: true },
     { name: "Date Début", selector: row => formatDate(row.date_debut), sortable: true },
     { name: "Date Fin", selector: row => formatDate(row.date_fin), sortable: true },
     { name: "Motif", selector: row => row.motif_absence, sortable: true },
     { name: "Statut", cell: row => <span className={`badge ${getStatutBadge(row.statut_absence)}`}>{row.statut_absence}</span>, sortable: true },
-    { name: "Action",
+    {
+      name: "Action",
       cell: row => (
         <>
           <select 
@@ -97,33 +101,47 @@ function Absence() {
             <option value="Validée">Validée</option>
             <option value="Refusée">Refusée</option>
           </select>
-          <button className="btn-show" onClick={() => openModal(row)}>  <FaEye /></button>
+          <button className="btn-show" onClick={() => openModal(row)}>
+            <FaEye />
+          </button>
+          <button
+            className="crud-btn-icon"
+            onClick={() => generatePDF(row.id_absence)}
+            title="Générer PDF"
+             style={{
+              color: "#dc2626",
+              margin: "5px",
+              backgroundColor: "rgba(220, 38, 38, 0.1)",
+            }}
+          >
+            <FaFilePdf size={16} />
+          </button>
         </>
       ),
       ignoreRowClick: true,
-      width: "180px"
+      width: "250px"
     }
   ];
 
   // --- NOUVELLE FONCTION DE CALCUL DES JOURS ---
-const calculateDays = (dateDebut, dateFin) => {
-      if (!dateDebut || !dateFin) return "N/A";
-      
-      const start = new Date(dateDebut);
-      const end = new Date(dateFin);
+  const calculateDays = (dateDebut, dateFin) => {
+    if (!dateDebut || !dateFin) return "N/A";
+    
+    const start = new Date(dateDebut);
+    const end = new Date(dateFin);
 
-      // On s'assure que les dates sont valides
-      if (isNaN(start) || isNaN(end)) return "N/A";
+    // On s'assure que les dates sont valides
+    if (isNaN(start) || isNaN(end)) return "N/A";
 
-      // Calcul de la différence en millisecondes
-      const diffTime = Math.abs(end.getTime() - start.getTime());
+    // Calcul de la différence en millisecondes
+    const diffTime = Math.abs(end.getTime() - start.getTime());
 
-      // Conversion des millisecondes en jours (1000 ms/s * 60 s/min * 60 min/h * 24 h/j)
-      // On ajoute 1 jour car une absence du 01/01 au 01/01 est 1 jour, pas 0.
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    // Conversion des millisecondes en jours (1000 ms/s * 60 s/min * 60 min/h * 24 h/j)
+    // On ajoute 1 jour car une absence du 01/01 au 01/01 est 1 jour, pas 0.
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-      return diffDays;
- };
+    return diffDays;
+  };
 
   return (
     <div className="absence-admin-container">
@@ -143,7 +161,7 @@ const calculateDays = (dateDebut, dateFin) => {
         </div>
       ) : error ? (
         <div className="error-container">
-          <p className="error-message">❌ Erreur: {error}</p>
+          <p className="error-message"> Erreur: {error}</p>
         </div>
       ) : (
         <DataTable

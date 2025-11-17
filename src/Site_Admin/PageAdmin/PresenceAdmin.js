@@ -150,7 +150,7 @@ function Presence() {
 
   useEffect(() => {
     applyFilters(presences);
-  }, [searchNom]);
+  }, [searchNom, presences]);
 
   const handleFiltrerParDate = () => {
     if (!dateDebut || !dateFin) {
@@ -171,6 +171,50 @@ function Presence() {
     applyFilters(presences);
   };
 
+  // ✅ Fonction pour enrichir les données avec période et heures effectuées
+  const enrichPresencesData = (data) => {
+    return data.map((item) => {
+      const arrivalHour = parseInt(item.heure_arrivee?.split(":")[0]);
+      const arrivalMin = parseInt(item.heure_arrivee?.split(":")[1]) || 0;
+      const departHour = parseInt(item.heure_depart?.split(":")[0]);
+      const departMin = parseInt(item.heure_depart?.split(":")[1]) || 0;
+
+      let heuresEffectuees = 0;
+
+      // ✅ Vérifier que les deux heures existent et sont valides
+      if (
+        item.heure_arrivee &&
+        item.heure_depart &&
+        item.heure_arrivee.includes(":") &&
+        item.heure_depart.includes(":")
+      ) {
+        const [arrH, arrM] = item.heure_arrivee.split(":").map(Number);
+        const [depH, depM] = item.heure_depart.split(":").map(Number);
+
+        // Calcul de la différence en minutes puis conversion en heures
+        const diff = (depH * 60 + depM) - (arrH * 60 + arrM);
+        if (!isNaN(diff) && diff > 0) {
+          heuresEffectuees = diff / 60;
+        }
+      }
+
+      // Conversion en format lisible
+      const hours = Math.floor(heuresEffectuees);
+      const minutes = Math.round((heuresEffectuees - hours) * 60);
+      const heuresFormat = heuresEffectuees > 0 ? `${hours}h ${minutes.toString().padStart(2, '0')}min` : "—";
+
+      return {
+        ...item,
+        periode: arrivalHour >= 14 ? "apresmidi" : "matin",
+        heuresEffectuees: heuresEffectuees.toFixed(2), // valeur numérique pour le total
+        heuresEffectueesFormat: heuresFormat // format lisible pour l'affichage
+      };
+    });
+  };
+
+  // ✅ Enrichir les données filtrées
+  const enrichedPresences = enrichPresencesData(filteredPresences);
+
   const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') : "N/A");
 
   const colonnes = [
@@ -178,6 +222,7 @@ function Presence() {
     { name: "Heure Arrivée", selector: (row) => row.heure_arrivee || "—", center: true },
     { name: "Heure Départ", selector: (row) => row.heure_depart || "—", center: true },
     { name: "Période", selector: (row) => row.periode || "—", center: true },
+    { name: "Heures effectuées", selector: (row) => row.heuresEffectueesFormat || "—", center: true },
     {
       name: "Statut",
       selector: (row) => row.statut_presence || "—",
@@ -201,6 +246,14 @@ function Presence() {
       sortable: true,
     },
   ];
+
+  // ✅ Calcul du total des heures
+  const totalHeures = enrichedPresences.reduce((sum, item) => sum + parseFloat(item.heuresEffectuees || 0), 0);
+
+  // Conversion du total en format lisible
+  const totalHours = Math.floor(totalHeures);
+  const totalMinutes = Math.round((totalHeures - totalHours) * 60);
+  const totalFormat = `${totalHours}h ${totalMinutes.toString().padStart(2, '0')}min`;
 
   return (
     <div className="presence-container-admin">
@@ -259,7 +312,7 @@ function Presence() {
 
       <DataTable
         columns={colonnes}
-        data={filteredPresences}
+        data={enrichedPresences}
         pagination
         paginationPerPage={5}
         paginationRowsPerPageOptions={[5, 10, 15, 20]}
@@ -269,6 +322,10 @@ function Presence() {
         noHeader
         noDataComponent="Aucune présence trouvée."
       />
+
+      <div style={{ marginTop: "15px", textAlign: "center", fontWeight: "bold" }}>
+        Total des heures effectuées : {totalFormat}
+      </div>
     </div>
   );
 }

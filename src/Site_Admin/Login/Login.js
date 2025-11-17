@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "../../StyleCss/Login.css";
+import "../../StyleCss/login.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -37,13 +37,20 @@ export default function Login() {
 
 
   return (
-    <div className="login-root">
-      <div className="login-card" role="main" aria-labelledby="login-title">
+    <div className="login-container">
+
+      {/* --- IMAGE À GAUCHE --- */}
+      <div className="login-image"></div>
+
+ {/* --- FORMULAIRE À DROITE --- */}
+     <div className="login-right">
+      
+        <div className="login-card">
         <div className="logo-box">
           <img
-            src="/images/logo/logo_orion.jpg"
+            src="/images/logo/rh_logo.png"
             alt="Logo"
-            height="70"
+            height="97"
             style={{ borderRadius: "40%" }}
           />
         </div>
@@ -71,6 +78,7 @@ export default function Login() {
 
           <button type="submit" className="btn">Se connecter</button>
         </form>
+        </div>
       </div>
     </div>
   );
