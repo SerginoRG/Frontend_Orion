@@ -474,3 +474,221 @@
 .logout-icon {
   font-size: 16px;
 }
+/* ============================
+   MODAL DE CONFIRMATION LOGOUT
+============================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+/* Accent subtil en haut du modal */
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 4px;
+  background: linear-gradient(90deg, #e74c3c, #27ae60);
+  border-radius: 0 0 4px 4px;
+}
+
+.modal-content  .mety {
+  font-size: 1.4rem;
+  color: #000000;
+  margin-bottom: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Texte descriptif optionnel */
+.modal-content p {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.modal-actions button {
+  min-width: 120px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de ripple au clic */
+.modal-actions button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.modal-actions button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Bouton Oui - Rouge avec dégradé */
+.btn-confirm {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-confirm:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(192, 57, 43, 0.5);
+}
+
+.btn-confirm:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(192, 57, 43, 0.4);
+}
+
+/* Bouton Non - Vert avec dégradé */
+.btn-cancel {
+  background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+}
+
+.btn-cancel:hover {
+  background: linear-gradient(135deg, #1e8449 0%, #196f3d 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(30, 132, 73, 0.5);
+}
+
+.btn-cancel:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(30, 132, 73, 0.4);
+}
+
+/* États de focus pour l'accessibilité */
+.modal-actions button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
+}
+
+/* Animation du overlay */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation du modal - slide + bounce */
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive - Tablettes */
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 35px 25px;
+    max-width: 380px;
+  }
+
+  .modal-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .modal-actions button {
+    min-width: 110px;
+    padding: 11px 20px;
+  }
+}
+
+/* Responsive - Mobiles */
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 30px 20px;
+    border-radius: 16px;
+  }
+
+  .modal-content h3 {
+    font-size: 1.15rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+    min-width: unset;
+    font-size: 0.95rem;
+    padding: 12px 0;
+  }
+}
+
+/* Mode sombre optionnel */
+@media (prefers-color-scheme: dark) {
+  .modal-content {
+    background: #2c3e50;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .modal-content h3 {
+    color: #ecf0f1;
+  }
+
+  .modal-content p {
+    color: #bdc3c7;
+  }
+}

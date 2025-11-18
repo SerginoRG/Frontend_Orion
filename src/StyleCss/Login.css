@@ -57,7 +57,6 @@ body {
 /* Image gauche avec courbe */
 .login-image {
   flex: 1;
-  background-image: url("../../public/images/logo/sary.avif");
   background-size: cover;
   background-position: center;
   clip-path: polygon(
@@ -68,6 +67,7 @@ body {
     0% 100%
   );
 }
+
 
 
 

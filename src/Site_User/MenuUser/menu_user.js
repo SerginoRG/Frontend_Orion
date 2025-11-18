@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import axios from "axios";
 import {
-  FaBars,
   FaHome,
   FaUserCheck,
   FaUserTimes,
   FaBell,
   FaSignOutAlt,
-  FaHistory
+  FaHistory,
+  FaChevronLeft,
+  FaChevronRight
 } from "react-icons/fa";
-import axios from "axios";
 import "../../StyleCss/menu.css";
 
 function MenuUser() {
@@ -18,27 +18,27 @@ function MenuUser() {
   const location = useLocation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
-
-  // ✅ Notification count doit être déclaré ici
   const [notifCount, setNotifCount] = useState(0);
 
-useEffect(() => {
-  const fetchNotif = () => {
-    const data = JSON.parse(sessionStorage.getItem("userData"));
-    if (!data) return;
+  // --- Modal logout ---
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-    axios.get(`http://127.0.0.1:8000/api/user/${data.id_employe}/notifications/unread-count`)
-      .then(res => setNotifCount(res.data))
-      .catch(err => console.log(err));
-  };
+  // Charger notifications
+  useEffect(() => {
+    const fetchNotif = () => {
+      const data = JSON.parse(sessionStorage.getItem("userData"));
+      if (!data) return;
 
-  fetchNotif();
+      axios
+        .get(`http://127.0.0.1:8000/api/user/${data.id_employe}/notifications/unread-count`)
+        .then((res) => setNotifCount(res.data))
+        .catch((err) => console.log(err));
+    };
 
-  // ✅ Mise à jour auto lorsque les notifications sont lues
-  window.addEventListener("notifUpdate", fetchNotif);
-  return () => window.removeEventListener("notifUpdate", fetchNotif);
-}, []);
-
+    fetchNotif();
+    window.addEventListener("notifUpdate", fetchNotif);
+    return () => window.removeEventListener("notifUpdate", fetchNotif);
+  }, []);
 
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem("userData"));
@@ -47,7 +47,6 @@ useEffect(() => {
     } else {
       setUserData(data);
 
-      // ✅ Charger le nombre de notifications non lues
       axios
         .get(`http://127.0.0.1:8000/api/user/${data.id_employe}/notifications/unread-count`)
         .then((res) => setNotifCount(res.data))
@@ -63,26 +62,35 @@ useEffect(() => {
     { path: "/user/dashboard/notifications", label: "Notifications", icon: <FaBell /> },
   ];
 
-  const handleLogout = () => {
-    Swal.fire({
-      title: "Voulez-vous vraiment vous déconnecter ?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Oui",
-      cancelButtonText: "Non",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        sessionStorage.removeItem("userData");
-        navigate("/");
-      }
-    });
+  // --- Fonction de validation du logout ---
+  const handleLogoutConfirm = () => {
+    sessionStorage.removeItem("userData");
+    navigate("/");
   };
 
   return (
     <div className="admin-container">
+      {/* ============= MODAL DE DÉCONNEXION ============= */}
+      {showLogoutModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h3 className="mety">Voulez-vous vraiment vous déconnecter ?</h3>
+      <div className="modal-actions">
+        <button className="btn-confirm" onClick={handleLogoutConfirm}>
+          Oui
+        </button>
+        <button className="btn-cancel" onClick={() => setShowLogoutModal(false)}>
+          Non
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+      {/* ================= SIDEBAR ================= */}
       <aside className={`sidebar ${open ? "open" : "closed"}`}>
         <div className="hamburger" onClick={() => setOpen(!open)}>
-          <FaBars size={24} />
+          {open ? <FaChevronLeft size={24} /> : <FaChevronRight size={24} />}
         </div>
 
         {open && (
@@ -96,7 +104,7 @@ useEffect(() => {
               <p className="user-email">{userData?.email}</p>
             </div>
 
-            <div className="sidebar-header">Espace Utilisateur</div>
+            <div className="sidebar-header">Espace Employé</div>
           </>
         )}
 
@@ -106,7 +114,9 @@ useEffect(() => {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`menu-link ${location.pathname === item.path ? "active" : ""}`}
+                  className={`menu-link ${
+                    location.pathname === item.path ? "active" : ""
+                  }`}
                 >
                   <span className="menu-icon">{item.icon}</span>
 
@@ -114,7 +124,6 @@ useEffect(() => {
                     <span className="menu-label">
                       {item.label}
 
-                      {/* ✅ Badge Notification */}
                       {item.label === "Notifications" && notifCount > 0 && (
                         <span className="badge-notif">{notifCount}</span>
                       )}
@@ -127,7 +136,7 @@ useEffect(() => {
         </nav>
 
         <div className="sidebar-footer">
-          <button className="logout-btn" onClick={handleLogout}>
+          <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>
             <FaSignOutAlt className="logout-icon" /> {open && "Déconnexion"}
           </button>
         </div>

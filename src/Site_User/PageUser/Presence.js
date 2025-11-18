@@ -96,10 +96,10 @@ let heuresEffectuees = 0;
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
       
       const periods = {
-        'arrivee-matin': [7 * 60 + 30, 8 * 60 + 30],
-        'depart-matin': [11 * 60 + 45, 12 * 60 + 30],
-        'arrivee-apresmidi': [14 * 60 + 30, 15 * 60 + 30],
-        'depart-apresmidi': [17 * 60 + 45, 18 * 60 + 30],
+        'arrivee-matin': [8 * 60, 10 * 60 + 30],   
+        'depart-matin': [11 * 60 + 55, 12 * 60 + 30],
+        'arrivee-apresmidi': [15 * 60, 16 * 60 + 30],
+        'depart-apresmidi': [17 * 60 + 55, 18 * 60 + 30],
       };
 
       let activePeriod = null;

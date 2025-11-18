@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "../../StyleCss/login.css";
@@ -8,6 +8,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [index, setIndex] = useState(0);
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -22,7 +23,7 @@ export default function Login() {
     sessionStorage.setItem("user", JSON.stringify(res.data.user));
     sessionStorage.setItem("token", res.data.token); // si tu utilises un token JWT
 
-    Swal.fire("Succès", "Connexion réussie", "success");
+   // Swal.fire("Succès", "Connexion réussie", "success");
 
     // Redirection vers le tableau de bord admin
     navigate("/admin/dashboard");
@@ -35,12 +36,31 @@ export default function Login() {
   }
 };
 
+ const images = [
+  "/images/logo/GRH.jpg",
+  "/images/logo/gestion.jpeg",
+  "/images/logo/sary.avif"
+];
+
+ // Changer d’image toutes les 2 secondes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+
+    return () => clearInterval(interval); // Nettoyage
+  }, []);
+
+  const backgroundImage = images[index];
 
   return (
     <div className="login-container">
 
       {/* --- IMAGE À GAUCHE --- */}
-      <div className="login-image"></div>
+     <div
+        className="login-image"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      ></div>
 
  {/* --- FORMULAIRE À DROITE --- */}
      <div className="login-right">

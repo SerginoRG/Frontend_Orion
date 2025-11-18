@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import axios from "axios";
 import {
-  FaBars,
   FaHome,
   FaUsers,
   FaBuilding,
@@ -14,7 +12,9 @@ import {
   FaMoneyBillWave,
   FaFileInvoiceDollar,
   FaCalendarCheck,
-  FaFileAlt
+  FaFileAlt,
+  FaChevronLeft,
+  FaChevronRight
 } from "react-icons/fa";
 import "../../StyleCss/menu.css";
 
@@ -22,6 +22,7 @@ function MenuAdmin() {
   const [open, setOpen] = useState(false);
   const [openCarousel, setOpenCarousel] = useState(false);
   const [services, setServices] = useState([]);
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // ✅ Ajouté
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,36 +34,6 @@ function MenuAdmin() {
       .catch((err) => console.error("Erreur de chargement des services :", err));
   }, []);
 
-  const menuItems = [
-    { path: "/admin/dashboard", label: "Accueil", icon: <FaHome /> },
-    { path: "/admin/dashboard/users", label: "Users", icon: <FaUsers /> },
-    // Employés sera inséré ici via le code JSX
-    { path: "/admin/dashboard/services", label: "Services", icon: <FaBuilding /> },
-    { path: "/admin/dashboard/contrats", label: "Contrats", icon: <FaFileContract /> },
-    { path: "/admin/dashboard/articles", label: "Articles", icon: <FaFileAlt /> },
-    { path: "/admin/dashboard/presences", label: "Présences", icon: <FaUserCheck /> },
-    { path: "/admin/dashboard/absences", label: "Absences", icon: <FaUserTimes /> },
-    { path: "/admin/dashboard/salaires", label: "Salaire", icon: <FaMoneyBillWave /> },
-    { path: "/admin/dashboard/bulletin", label: "Bulletin", icon: <FaFileInvoiceDollar /> },
-    { path: "/admin/dashboard/conge", label: "Congés", icon: <FaCalendarCheck /> },
-  ];
-
-  const handleLogout = () => {
-    Swal.fire({
-      title: "Voulez-vous vraiment vous déconnecter ?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Oui",
-      cancelButtonText: "Non",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.clear();
-        sessionStorage.clear();
-        navigate("/admin/login");
-      }
-    });
-  };
-
   useEffect(() => {
     const user = sessionStorage.getItem("user");
     if (!user) {
@@ -70,13 +41,42 @@ function MenuAdmin() {
     }
   }, [navigate]);
 
+  // ✅ Fonction pour ouvrir le modal
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  // ✅ Fonction de confirmation de déconnexion
+  const handleLogoutConfirm = () => {
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("userData");
+    navigate("/admin/login");
+  };
+
   return (
     <div className="admin-container">
+      {/* ============= MODAL DE DÉCONNEXION ============= */}
+      {showLogoutModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3 className="mety" >Voulez-vous vraiment vous déconnecter ?</h3>
+            <div className="modal-actions">
+              <button className="btn-confirm" onClick={handleLogoutConfirm}>
+                Oui
+              </button>
+              <button className="btn-cancel" onClick={() => setShowLogoutModal(false)}>
+                Non
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       <aside className={`sidebar ${open ? "open" : "closed"}`}>
         {/* Bouton Hamburger */}
         <div className="hamburger" onClick={() => setOpen(!open)}>
-          <FaBars size={24} />
+          {open ? <FaChevronLeft size={24} /> : <FaChevronRight size={24} />}
         </div>
 
         {/* Logo */}
@@ -180,7 +180,7 @@ function MenuAdmin() {
               </Link>
             </li>
 
-            {/* article */}
+            {/* Articles */}
             <li>
               <Link
                 to="/admin/dashboard/articles"
@@ -194,7 +194,7 @@ function MenuAdmin() {
               </Link>
             </li>
 
-             {/* Contrats */}
+            {/* Contrats */}
             <li>
               <Link
                 to="/admin/dashboard/contrats"
@@ -264,15 +264,14 @@ function MenuAdmin() {
               </Link>
             </li>
 
-            
-            {/* Absences */}
+            {/* Congés */}
             <li>
               <Link
                 to="/admin/dashboard/conge"
                 className={`menu-link ${
                   location.pathname === "/admin/dashboard/conge" ? "active" : ""
                 }`}
-                title={!open ? "Absences" : ""}
+                title={!open ? "Congés" : ""}
               >
                 <span className="menu-icon"><FaCalendarCheck /></span>
                 {open && <span className="menu-label">Congés</span>}

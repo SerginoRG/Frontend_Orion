@@ -316,17 +316,17 @@ const handleView = async (row) => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="crud-form-group">
                   <label>Matricule</label>
-                  <input type="text" value={matriculeEmploye} onChange={(e) => setMatriculeEmploye(e.target.value)} required />
+                  <input type="text"  placeholder="Ex: E001" value={matriculeEmploye} onChange={(e) => setMatriculeEmploye(e.target.value)} required />
                 </div>
 
                 <div className="crud-form-group">
                   <label>Nom</label>
-                  <input type="text" value={nomEmploye} onChange={(e) => setNomEmploye(e.target.value)} required />
+                  <input type="text" placeholder="Ex: RAKOTO" value={nomEmploye} onChange={(e) => setNomEmploye(e.target.value)} required />
                 </div>
 
                 <div className="crud-form-group">
                   <label>Prénom</label>
-                  <input type="text" value={prenomEmploye} onChange={(e) => setPrenomEmploye(e.target.value)} required />
+                  <input type="text" placeholder="Ex: Jean" value={prenomEmploye} onChange={(e) => setPrenomEmploye(e.target.value)} required />
                 </div>
 
                 <div className="crud-form-group">
@@ -338,6 +338,7 @@ const handleView = async (row) => {
                   <label>CIN</label>
                   <input
                     type="text"
+                    placeholder="Ex: xxxxxxxxxxxx"
                     value={cinEmploye}
                     onChange={handleCinChange}
                     required
@@ -345,18 +346,19 @@ const handleView = async (row) => {
                 </div>
                 <div className="crud-form-group">
                   <label>Adresse</label>
-                  <input type="text" value={adresseEmploye} onChange={(e) => setAdresseEmploye(e.target.value)} required />
+                  <input type="text" placeholder="Ex: Toliara" value={adresseEmploye} onChange={(e) => setAdresseEmploye(e.target.value)} required />
                 </div>
 
                 <div className="crud-form-group">
                   <label>Email</label>
-                  <input type="email" value={emailEmploye} onChange={(e) => setEmailEmploye(e.target.value)} required />
+                  <input type="email" placeholder="Ex: @gmail.com" value={emailEmploye} onChange={(e) => setEmailEmploye(e.target.value)} required />
                 </div>
 
                <div className="crud-form-group">
                   <label>Téléphone</label>
                   <input
                     type="text"
+                    placeholder="Ex: xxxxxxxxxx"
                     value={telephoneEmploye}
                     onChange={handleTelephoneChange}
                     required
@@ -370,12 +372,12 @@ const handleView = async (row) => {
 
                 <div className="crud-form-group">
                   <label>Poste</label>
-                  <input type="text" value={posteEmploye} onChange={(e) => setPosteEmploye(e.target.value)} required />
+                  <input type="text" placeholder="Ex: Chef" value={posteEmploye} onChange={(e) => setPosteEmploye(e.target.value)} required />
                 </div>
 
                 <div className="crud-form-group">
                   <label>Salaire de base</label>
-                  <input type="number" value={salaireBaseEmploye} onChange={(e) => setSalaireBaseEmploye(e.target.value)} required />
+                  <input type="number" placeholder="Ex: xxxxxxxxxxxx" value={salaireBaseEmploye} onChange={(e) => setSalaireBaseEmploye(e.target.value)} required />
                 </div>
 
                 <div className="crud-form-group">

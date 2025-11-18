@@ -196,7 +196,7 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
             <form onSubmit={handleSubmit} className="crud-form">
               <div className="crud-form-group">
                 <label>Type de contrat</label>
-                <input type="text" value={typeContrat} onChange={(e) => setTypeContrat(e.target.value)} required />
+                <input type="text"  placeholder="CDI ou CDD" value={typeContrat} onChange={(e) => setTypeContrat(e.target.value)} required />
               </div>
 
               <div className="crud-form-group">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "../../StyleCss/login.css";
@@ -9,6 +9,7 @@ export default function LoginUser() {
   const [passwordUtilisateur, setPasswordUtilisateur] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+   const [index, setIndex] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,10 +39,31 @@ export default function LoginUser() {
     }
   };
 
+  const images = [
+  "/images/logo/GRH.jpg",
+  "/images/logo/gestion.jpeg",
+  "/images/logo/sary.avif"
+];
+
+ // Changer d’image toutes les 2 secondes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+
+    return () => clearInterval(interval); // Nettoyage
+  }, []);
+
+  const backgroundImage = images[index];
+
   return (
     <div className="login-container">
       {/* --- IMAGE À GAUCHE --- */}
-      <div className="login-image"></div>
+    <div
+        className="login-image"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      ></div>
+
 
       {/* --- FORMULAIRE À DROITE --- */}
       <div className="login-right">

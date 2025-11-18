@@ -36,40 +36,37 @@ function Presence() {
   const [filterMode, setFilterMode] = useState(getCurrentPeriode);
 
   // ✅ Activation bouton selon les plages horaires
-  useEffect(() => {
-    const checkButtonAvailability = () => {
-      const now = new Date();
-      const currentHour = now.getHours();
-      const currentMinute = now.getMinutes();
-      const currentTime = currentHour * 60 + currentMinute;
+useEffect(() => {
+  const checkButtonAvailability = () => {
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
 
-      // 12h00-13h00 (720-780 minutes)
-      const isInMorningSlot = currentTime >= 720 && currentTime < 780;
-      
-      // 18h00-19h00 (1080-1140 minutes)
-      const isInAfternoonSlot = currentTime >= 1080 && currentTime < 1140;
+    const isInMorningSlot = currentTime >= 720 && currentTime < 780;
+    const isInAfternoonSlot = currentTime >= 1080 && currentTime < 1140;
 
-      // Activer le bouton
-      setIsButtonActive(isInMorningSlot || isInAfternoonSlot);
+    let periode = "";
+    if (isInMorningSlot) {
+      periode = "matin";
+    } else if (isInAfternoonSlot) {
+      periode = "apresmidi";
+    } else {
+      periode = getCurrentPeriode();
+    }
 
-      // Définir la période actuelle
-      if (isInMorningSlot) {
-        setCurrentPeriode("matin");
-        setFilterMode("matin");
-      } else if (isInAfternoonSlot) {
-        setCurrentPeriode("apresmidi");
-        setFilterMode("apresmidi");
-      } else {
-        // Hors plage horaire : afficher la prochaine période
-        setFilterMode(getCurrentPeriode());
-      }
-    };
+    // ✅ Vérifier si la période a déjà été marquée
+    const isMarked = sessionStorage.getItem(`presenceMarked_${periode}`) === "true";
 
-    checkButtonAvailability();
-    // Vérifier toutes les 30 secondes
-    const interval = setInterval(checkButtonAvailability, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    // Activer le bouton seulement si c'est la plage horaire ET non marqué
+    setIsButtonActive((isInMorningSlot || isInAfternoonSlot) && !isMarked);
+    setCurrentPeriode(periode);
+    setFilterMode(periode);
+  };
+
+  checkButtonAvailability();
+  const interval = setInterval(checkButtonAvailability, 30000); // mise à jour toutes les 30s
+  return () => clearInterval(interval);
+}, []);
+
 
   // ✅ Charger les présences
   useEffect(() => {
@@ -110,43 +107,45 @@ function Presence() {
   };
 
   // ✅ Marquer les absents
-  const handleToggleFilter = async () => {
-    if (!isButtonActive) {
-      Swal.fire(
-        "Action non disponible", 
-        "Le bouton est disponible uniquement de 12h-13h (matin) et 18h-19h (après-midi).", 
-        "warning"
-      );
-      return;
-    }
+const handleToggleFilter = async () => {
+  if (!isButtonActive) {
+    Swal.fire(
+      "Action non disponible",
+      "Le bouton est disponible uniquement de 12h-13h (matin) et 18h-19h (après-midi).",
+      "warning"
+    );
+    return;
+  }
 
-    const periode = filterMode;
+  const periode = filterMode;
 
-    try {
-      const response = await axios.post(
-        `http://127.0.0.1:8000/api/admin/marquer-absents/${periode}`
-      );
-      
-      console.log('Réponse serveur:', response.data);
-      
-      Swal.fire(
-        "Succès", 
-        `${response.data.nombre_absents} absent(s) enregistré(s) pour : ${periode}`, 
-        "success"
-      );
+  try {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/admin/marquer-absents/${periode}`
+    );
 
-      fetchPresences();
-    } catch (error) {
-      console.error('Erreur complète:', error);
-      console.error('Détails:', error.response?.data);
-      
-      const errorMsg = error.response?.data?.error || 
-                       error.response?.data?.message || 
-                       'Impossible d\'enregistrer les absents.';
-      
-      Swal.fire("Erreur", errorMsg, "error");
-    }
-  };
+    Swal.fire(
+      "Succès",
+      `${response.data.nombre_absents} absent(s) enregistré(s) pour : ${periode}`,
+      "success"
+    );
+
+    // ✅ Désactiver le bouton après clic
+    setIsButtonActive(false);
+
+    // ✅ Sauvegarder en sessionStorage
+    sessionStorage.setItem(`presenceMarked_${periode}`, "true");
+
+    fetchPresences();
+  } catch (error) {
+    Swal.fire(
+      "Erreur",
+      error.response?.data?.message || "Impossible d'enregistrer les absents.",
+      "error"
+    );
+  }
+};
+
 
   useEffect(() => {
     applyFilters(presences);
@@ -259,13 +258,13 @@ function Presence() {
     <div className="presence-container-admin">
       <h1>Gestion des Présences</h1>
 
-      <div style={{ marginBottom: '20px' }}>
-        <button
+      <div style={{ marginBottom: '20px', textAlign: "center" }}>
+       <button
           onClick={handleToggleFilter}
           className="btn-filtrer-periode-admin"
           disabled={!isButtonActive}
           style={{
-            backgroundColor: !isButtonActive 
+            backgroundColor: !isButtonActive
               ? "#9E9E9E" 
               : (filterMode === "matin" ? "#4CAF50" : "#2196F3"),
             cursor: !isButtonActive ? "not-allowed" : "pointer",
@@ -276,6 +275,7 @@ function Presence() {
             ? "Marquer Absents Matin" 
             : "Marquer Absents Après-midi"}
         </button>
+
 
         <div style={{ marginTop: '8px', fontSize: '0.9em', color: !isButtonActive ? '#666' : '#000' }}>
           <strong>Période actuelle :</strong> {filterMode === "matin" ? "Matin (12h-13h)" : "Après-midi (18h-19h)"}

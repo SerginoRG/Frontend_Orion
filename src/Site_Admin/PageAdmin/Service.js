@@ -150,6 +150,7 @@ export default function Service() {
                 <label>Nom</label>
                 <input
                   type="text"
+                  placeholder="Ex: INFORMATIQUE"
                   value={nomService}
                   onChange={(e) => setNomService(e.target.value)}
                   required
@@ -160,6 +161,7 @@ export default function Service() {
                   <label>Description</label>
                   <textarea
                     value={descriptionService}
+                     placeholder="Entrez le contenu de la description..."
                     onChange={(e) => {
                       const words = e.target.value.trim().split(/\s+/); // découpe en mots
                       if (words.length <= 10) {

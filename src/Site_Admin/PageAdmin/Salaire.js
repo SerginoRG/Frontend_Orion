@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
-import { FaSearch, FaTrash, FaEye } from "react-icons/fa";
+import { FaSearch, FaTrash, FaEye,FaMoneyBillAlt,FaMinusSquare,FaDollarSign,FaInfoCircle } from "react-icons/fa";
 import "../../StyleCss/Crud.css";
 
 function Salaire() {
@@ -464,7 +464,7 @@ function Salaire() {
                 </div>
 
                 <div className="crud-form-group">
-                  <label>CNAPS (1%)</label>
+                  <label>CNAPS </label>
                   <input
                     type="number"
                     step="0.01"
@@ -476,7 +476,7 @@ function Salaire() {
                 </div>
 
                 <div className="crud-form-group">
-                  <label>Cotisation Médicale (1%)</label>
+                  <label>Cotisation Médicale </label>
                   <input
                     type="number"
                     step="0.01"
@@ -535,19 +535,19 @@ function Salaire() {
 
             <div className="crud-card">
               <div className="crud-card-header">
-                <h2>📋 Détails du Salaire</h2>
+                <h2><FaInfoCircle /> Détails du Salaire</h2>
                 <p>{selectedSalaire.mois_salaire} {selectedSalaire.annee_salaire}</p>
               </div>
 
               <div style={{ padding: '20px' }}>
                 <div style={{ marginBottom: '20px' }}>
                   <h3 style={{ fontSize: '16px', marginBottom: '10px', color: '#333' }}>
-                    👤 {selectedSalaire.employe?.nom_employe} {selectedSalaire.employe?.prenom_employe}
+                     {selectedSalaire.employe?.nom_employe} {selectedSalaire.employe?.prenom_employe}
                   </h3>
                 </div>
 
                 <div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-                  <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#555' }}>💵 Rémunération</h4>
+                  <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#555' }}><FaDollarSign /> Rémunération</h4>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e0e0e0' }}>
                     <span>Salaire de base:</span>
                     <strong>{selectedSalaire.salaire_base} Ar</strong>
@@ -563,13 +563,13 @@ function Salaire() {
                 </div>
 
                 <div style={{ backgroundColor: '#fff3cd', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-                  <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#856404' }}>📉 Déductions</h4>
+                  <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#856404' }}><FaMinusSquare /> Déductions</h4>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ffc107' }}>
-                    <span>CNAPS (1%):</span>
+                    <span>CNAPS :</span>
                     <strong>{selectedSalaire.cnaps || 0} Ar</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ffc107' }}>
-                    <span>Médical (1%):</span>
+                    <span>Médical :</span>
                     <strong>{selectedSalaire.medical || 0} Ar</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ffc107' }}>
@@ -583,7 +583,7 @@ function Salaire() {
                 </div>
 
                 <div style={{ backgroundColor: '#d1fae5', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
-                  <h4 style={{ fontSize: '14px', marginBottom: '5px', color: '#065f46' }}>✅ Salaire Net à Payer</h4>
+                  <h4 style={{ fontSize: '14px', marginBottom: '5px', color: '#065f46' }}><FaMoneyBillAlt /> Salaire Net à Payer</h4>
                   <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#059669' }}>
                     {selectedSalaire.salaire_net} Ar
                   </div>
