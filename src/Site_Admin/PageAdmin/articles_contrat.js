@@ -21,7 +21,7 @@ export default function Article() {
 
   const fetchArticles = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/articles");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/articles`);
       setArticles(res.data);
     } catch (error) {
       console.error("Erreur de chargement :", error);
@@ -55,7 +55,7 @@ export default function Article() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://127.0.0.1:8000/api/articles/${id}`);
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/articles/${id}`);
           Swal.fire("Supprimé !", "Article supprimé avec succès.", "success");
           fetchArticles();
         } catch (err) {
@@ -75,10 +75,10 @@ export default function Article() {
 
     try {
       if (editingId) {
-        await axios.put(`http://127.0.0.1:8000/api/articles/${editingId}`, payload);
+        await axios.put(`${process.env.REACT_APP_API_URL}api/articles/${editingId}`, payload);
         Swal.fire("Modifié !", "Article mis à jour avec succès.", "success");
       } else {
-        await axios.post("http://127.0.0.1:8000/api/articles", payload);
+        await axios.post(`${process.env.REACT_APP_API_URL}api/articles`, payload);
         Swal.fire("Ajouté !", "Article ajouté avec succès.", "success");
       }
       setModalOpen(false);

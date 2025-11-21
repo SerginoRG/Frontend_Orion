@@ -29,7 +29,7 @@ function MenuAdmin() {
   // Charger les services depuis l'API Laravel
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/services")
+      .get(`${process.env.REACT_APP_API_URL}api/services`)
       .then((res) => setServices(res.data))
       .catch((err) => console.error("Erreur de chargement des services :", err));
   }, []);

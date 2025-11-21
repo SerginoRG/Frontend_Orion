@@ -3,7 +3,7 @@
   padding: 30px;
   background-color: #f4f6f8;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
 }
 
 /* Titre */
@@ -19,17 +19,20 @@
 .filter-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 20px; /* Augmenté un peu pour espacer les groupes */
   justify-content: center;
   margin-bottom: 20px;
-  align-items: center;
+  align-items: center; /* Ceci aligne verticalement les inputs et les boutons */
 }
 
 .filter-container label {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* CHANGEMENT ICI : met le texte à côté de l'input */
+  align-items: center; /* Centre le texte verticalement par rapport à l'input */
+  gap: 10px; /* Ajoute un espace entre le texte "Date début" et l'input */
   font-weight: 500;
   color: #34495e;
+  margin-bottom: 0; /* S'assure qu'il n'y a pas de marge en bas */
 }
 
 .filter-container input[type="date"] {
@@ -192,50 +195,74 @@ select:focus {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
-.modal-content {
-  background-color: #fff;
-  padding: 25px;
-  border-radius: 8px;
+.modal-content-admin {
+  background-color: #ffffff;
+  padding: 30px 25px;
+  border-radius: 12px;
   width: 500px;
   max-width: 90%;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
   position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+/* Animation d'apparition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.modal-content h2 {
+
+.modal-content-admin h2 {
   margin-top: 0;
+  margin-bottom: 20px;
   color: #007bff;
   text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
 }
 
-.modal-content p {
-  margin: 8px 0;
+.modal-content-admin p {
+  margin: 10px 0;
   font-size: 15px;
+  line-height: 1.5;
+  color: #2c3e50;
 }
 
-.modal-content a {
+.modal-content-admin p strong {
+  color: #34495e;
+}
+
+.modal-content-admin a {
   color: #2980b9;
   text-decoration: none;
+  font-weight: 500;
 }
 
 .modal-content a:hover {
   text-decoration: underline;
 }
 
-.modal-content button {
-  margin-top: 15px;
-  padding: 6px 12px;
+.modal-content-admin button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 8px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: #007bff;
   color: #fff;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.3s;
 }
 
-.modal-content button:hover {
+.modal-content-admin button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 .btn-show {
@@ -250,4 +277,22 @@ select:focus {
 
 .btn-show:hover {
   background-color: #1e8449;
+}
+/* Responsive */
+@media (max-width: 600px) {
+  .modal-content-admin {
+    padding: 20px 15px;
+  }
+
+  .modal-content-admin h2 {
+    font-size: 20px;
+  }
+
+  .modal-content-admin p {
+    font-size: 14px;
+  }
+
+  .modal-content-admin button {
+    width: 100%;
+  }
 }

@@ -34,7 +34,7 @@ export default function User() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/utilisateurs");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/utilisateurs`);
       setUsers(res.data);
     } catch (error) {
       console.error("Erreur de chargement :", error);
@@ -43,7 +43,7 @@ export default function User() {
 
   const fetchEmployes = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/employes");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/employes`);
       setEmployes(res.data);
     } catch (error) {
       console.error(error);
@@ -77,7 +77,7 @@ export default function User() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://127.0.0.1:8000/api/utilisateurs/${id}`);
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/utilisateurs/${id}`);
           Swal.fire("Supprimé !", "Utilisateur supprimé avec succès.", "success");
           fetchUsers();
         } catch (err) {
@@ -104,12 +104,12 @@ export default function User() {
     try {
       if (editingId) {
         await axios.put(
-          `http://127.0.0.1:8000/api/utilisateurs/${editingId}`,
+          `${process.env.REACT_APP_API_URL}api/utilisateurs/${editingId}`,
           payload
         );
         Swal.fire("Modifié !", "Utilisateur mis à jour avec succès.", "success");
       } else {
-        await axios.post("http://127.0.0.1:8000/api/utilisateurs", payload);
+        await axios.post(`${process.env.REACT_APP_API_URL}api/utilisateurs`, payload);
         Swal.fire("Ajouté !", "Utilisateur ajouté avec succès.", "success");
       }
       setModalOpen(false);
@@ -134,7 +134,7 @@ export default function User() {
       if (result.isConfirmed) {
         try {
           await axios.put(
-            `http://127.0.0.1:8000/api/utilisateurs/${id}/statut`,
+            `${process.env.REACT_APP_API_URL}api/utilisateurs/${id}/statut`,
             {
               statut_utilisateur: !currentStatus,
             }
@@ -232,21 +232,23 @@ export default function User() {
             <h2>{editingId ? "Modifier un utilisateur" : "Ajouter un utilisateur"}</h2>
 
             <form onSubmit={handleSubmit} className="crud-form">
-              <div className="crud-form-group">
-                <label>Employé</label>
-                <select
-                  value={employeId}
-                  onChange={(e) => setEmployeId(e.target.value)}
-                  required
-                >
-                  <option value="">-- Sélectionnez un employé --</option>
-                  {employes.map((emp) => (
-                    <option key={emp.id_employe} value={emp.id_employe}>
-                      {emp.nom_employe} {emp.prenom_employe}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {!editingId && (
+                <div className="crud-form-group">
+                  <label>Employé</label>
+                  <select
+                    value={employeId}
+                    onChange={(e) => setEmployeId(e.target.value)}
+                    required
+                  >
+                    <option value="">-- Sélectionnez un employé --</option>
+                    {employes.map((emp) => (
+                      <option key={emp.id_employe} value={emp.id_employe}>
+                        {emp.nom_employe} {emp.prenom_employe}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="crud-form-group">
                 <label>Nom utilisateur</label>
@@ -278,7 +280,7 @@ export default function User() {
                 </div>
               </div>
 
-              {/* Confirmation mot de passe avec œil 👁️ */}
+              {/* Confirmation mot de passe avec œil  */}
               <div className="crud-form-group password-field">
                 <label>Confirmer le mot de passe</label>
                 <div className="password-wrapper">

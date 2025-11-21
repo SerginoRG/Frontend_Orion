@@ -20,7 +20,7 @@ export default function Service() {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/services");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/services`);
       setServices(res.data);
     } catch (error) {
       console.error("Erreur de chargement :", error);
@@ -52,7 +52,7 @@ export default function Service() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://127.0.0.1:8000/api/services/${id}`);
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/services/${id}`);
           Swal.fire("Supprimé !", "Service supprimé avec succès.", "success");
           fetchServices();
         } catch (err) {
@@ -71,10 +71,10 @@ export default function Service() {
 
     try {
       if (editingId) {
-        await axios.put(`http://127.0.0.1:8000/api/services/${editingId}`, payload);
+        await axios.put(`${process.env.REACT_APP_API_URL}api/services/${editingId}`, payload);
         Swal.fire("Modifié !", "Service mis à jour avec succès.", "success");
       } else {
-        await axios.post("http://127.0.0.1:8000/api/services", payload);
+        await axios.post(`${process.env.REACT_APP_API_URL}api/services`, payload);
         Swal.fire("Ajouté !", "Service ajouté avec succès.", "success");
       }
       setModalOpen(false);

@@ -1,12 +1,10 @@
 /* === Style global de la page d'absence === */
 .absence-container {
   padding: 20px;
- 
-  /* Centrage horizontal et vertical */
   display: flex;
-  justify-content: center; /* centre horizontalement */
-  align-items: center;     /* centre verticalement */
-     /* prend toute la hauteur de la fenêtre */
+  flex-direction: column; 
+  justify-content: flex-start; 
+  align-items: center;    
   box-sizing: border-box;
 }
 .modal {
@@ -58,10 +56,12 @@
 /* === Titre === */
 .absence-title {
   text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: #2b4c7e;
-  margin-bottom: 20px;
+  font-size: 2rem; /* Taille de police plus grande */
+  font-weight: 600; /* Police un peu moins grasse */
+  color: #1e3a8a; /* Couleur plus vive, similaire à Presence.css */
+  margin-bottom: 25px; /* Marge inférieure augmentée */
+  text-transform: uppercase; /* Texte en majuscules pour un style affirmé */
+  letter-spacing: 1px; /* Espacement des lettres pour une meilleure lisibilité */
 }
 .btn-add {
   background-color: #007bff;

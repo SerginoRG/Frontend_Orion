@@ -11,7 +11,7 @@ function Notifications() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
   if (!userData) return;
 
-  axios.put(`http://127.0.0.1:8000/api/user/${userData.id_employe}/notifications/mark-read`)
+  axios.put(`${process.env.REACT_APP_API_URL}api/user/${userData.id_employe}/notifications/mark-read`)
     .then(() => {
       // Optionnel: rafraîchir le compteur dans le menu
       window.dispatchEvent(new Event("notifUpdate"));
@@ -25,7 +25,7 @@ function Notifications() {
     const employe_id = userData?.id_employe;
     if (!employe_id) return;
 
-    axios.get(`http://127.0.0.1:8000/api/user/${employe_id}/notifications`)
+    axios.get(`${process.env.REACT_APP_API_URL}api/user/${employe_id}/notifications`)
       .then(res => setNotifications(res.data))
       .catch(err => console.log(err));
   };
@@ -47,7 +47,7 @@ function Notifications() {
       cancelButtonText: "Annuler"
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`http://127.0.0.1:8000/api/notifications/${id}`)
+        axios.delete(`${process.env.REACT_APP_API_URL}api/notifications/${id}`)
           .then(() => {
             Swal.fire("Supprimée !", "La notification a été supprimée.", "success");
             fetchNotifications();

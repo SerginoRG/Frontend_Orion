@@ -30,7 +30,7 @@ export default function Absence() {
   const fetchAbsences = async () => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/absences/employe/${userData.id_employe}`
+        `${process.env.REACT_APP_API_URL}api/absences/employe/${userData.id_employe}`
       );
       setAbsences(res.data);
     } catch (err) {
@@ -70,7 +70,7 @@ export default function Absence() {
     if (formData.justificatif) form.append("justificatif", formData.justificatif);
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/absences", form, {
+      await axios.post(`${process.env.REACT_APP_API_URL}api/absences`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -105,7 +105,7 @@ export default function Absence() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://127.0.0.1:8000/api/absences/${id}`);
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/absences/${id}`);
           Swal.fire("Supprimé !", "Demande supprimée", "success");
           fetchAbsences();
         } catch (err) {
@@ -160,7 +160,7 @@ export default function Absence() {
       cell: (row) =>
       row.justificatif ? (
       <a // <-- Missing opening <a> tag added here
-      href={`http://127.0.0.1:8000/storage/${row.justificatif}`}
+      href={`${process.env.REACT_APP_API_URL}storage/${row.justificatif}`}
       target="_blank"
       rel="noopener noreferrer"
       className="btn-view-file"
@@ -192,6 +192,7 @@ export default function Absence() {
 
   return (
     <div className="absence-container">
+      <h2 className="absence-title">Demandes d'absence</h2>
       <div style={{ width: "100%", maxWidth: "900px" }}>
         <button className="btn-add" onClick={() => setModalOpen(true)}>
           Nouvelle demande

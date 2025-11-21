@@ -23,7 +23,7 @@ function Historique() {
     // Vérifier si id_employe existe directement dans userData
     if (userData.id_employe) {
       // Cas 1: id_employe est directement dans userData
-      axios.get(`http://127.0.0.1:8000/api/bulletins/employe/${userData.id_employe}`)
+      axios.get(`${process.env.REACT_APP_API_URL}api/bulletins/employe/${userData.id_employe}`)
         .then((res) => {
           setBulletins(res.data);
           setLoading(false);
@@ -36,7 +36,7 @@ function Historique() {
         });
     } else {
       // Cas 2: id_employe doit être récupéré via le profil
-      axios.get(`http://127.0.0.1:8000/api/utilisateurs/${userData.id}/profil`)
+      axios.get(`${process.env.REACT_APP_API_URL}api/utilisateurs/${userData.id}/profil`)
         .then(res => {
           const employeId = res.data.employe?.id_employe;
           
@@ -44,7 +44,7 @@ function Historique() {
             throw new Error("ID employé non trouvé dans le profil");
           }
           
-          return axios.get(`http://127.0.0.1:8000/api/bulletins/employe/${employeId}`);
+          return axios.get(`${process.env.REACT_APP_API_URL}api/bulletins/employe/${employeId}`);
         })
         .then((res) => {
           setBulletins(res.data);
@@ -105,7 +105,7 @@ function Historique() {
     cell: (row) =>
       row.fichier_pdf ? (
         <a
-          href={`http://127.0.0.1:8000/storage/${row.fichier_pdf}`}
+          href={`${process.env.REACT_APP_API_URL}storage/${row.fichier_pdf}`}
           target="_blank"
           rel="noopener noreferrer"
           className="link-download"
@@ -132,7 +132,7 @@ function Historique() {
         className="btn-pdf"
         onClick={() =>
           window.open(
-            `http://127.0.0.1:8000/api/bulletins/${row.id_bulletin}/pdf`,
+            `${process.env.REACT_APP_API_URL}api/bulletins/${row.id_bulletin}/pdf`,
             "_blank"
           )
         }

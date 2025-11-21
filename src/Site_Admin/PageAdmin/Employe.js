@@ -34,7 +34,7 @@ export default function Employe() {
   useEffect(() => {
     const fetchService = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/services/${id_service}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/services/${id_service}`);
         setNomService(res.data.nom_service);
       } catch (error) {
         console.error("Erreur lors du chargement du service :", error);
@@ -47,7 +47,7 @@ export default function Employe() {
   useEffect(() => {
     const fetchEmployes = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/employes/${id_service}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/employes/${id_service}`);
         setEmployes(res.data);
       } catch (error) {
         console.error("Erreur lors du chargement des employés :", error);
@@ -68,7 +68,7 @@ export default function Employe() {
       cell: (row) =>
         row.photo_profil_employe ? (
           <img
-            src={`http://127.0.0.1:8000/storage/${row.photo_profil_employe}`}
+            src={`${process.env.REACT_APP_API_URL}storage/${row.photo_profil_employe}`}
             alt="profil"
             width="40"
             height="40"
@@ -141,7 +141,7 @@ export default function Employe() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://127.0.0.1:8000/api/employes/${id}`);
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/employes/${id}`);
           setEmployes(employes.filter((emp) => emp.id_employe !== id));
           Swal.fire("Supprimé !", "L'employé a été supprimé.", "success");
         } catch (error) {
@@ -172,20 +172,20 @@ export default function Employe() {
     try {
       if (editingId) {
         await axios.post(
-          `http://127.0.0.1:8000/api/employes/${editingId}?_method=PUT`,
+          `${process.env.REACT_APP_API_URL}api/employes/${editingId}?_method=PUT`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
         Swal.fire("Modifié", "Employé mis à jour avec succès", "success");
       } else {
-        await axios.post(`http://127.0.0.1:8000/api/employes`, formData, {
+        await axios.post(`${process.env.REACT_APP_API_URL}api/employes`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         Swal.fire("Ajouté", "Nouvel employé ajouté avec succès", "success");
       }
 
       // Rechargement de la liste
-      const res = await axios.get(`http://127.0.0.1:8000/api/employes/${id_service}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/employes/${id_service}`);
       setEmployes(res.data);
       setModalOpen(false);
     } catch (error) {
@@ -259,7 +259,7 @@ const handleView = async (row) => {
   setPhotoProfilEmploye(row.photo_profil_employe);
 
   try {
-    const res = await axios.get(`http://127.0.0.1:8000/api/contrats/employe/${row.id_employe}`);
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}api/contrats/employe/${row.id_employe}`);
     setContrat(res.data ? res.data : null);
 
   } catch (error) {
@@ -413,7 +413,7 @@ const handleView = async (row) => {
                   {photoProfilEmploye && (
                     <div>
                       <img
-                        src={`http://127.0.0.1:8000/storage/${photoProfilEmploye}`}
+                        src={`${process.env.REACT_APP_API_URL}storage/${photoProfilEmploye}`}
                         alt="profil"
                         width="120"
                         height="120"

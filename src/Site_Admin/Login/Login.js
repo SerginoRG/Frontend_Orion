@@ -9,12 +9,13 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const res = await axios.post("http://127.0.0.1:8000/api/login", {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}api/login`, {
       email,
       password,  
     });

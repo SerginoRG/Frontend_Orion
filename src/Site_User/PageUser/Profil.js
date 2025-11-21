@@ -11,7 +11,7 @@ function Profil() {
     if (!userData) return;
 
     axios
-      .get(`http://127.0.0.1:8000/api/utilisateurs/${userData.id}/profil`)
+      .get(`${process.env.REACT_APP_API_URL}api/utilisateurs/${userData.id}/profil`)
       .then((res) => {
         setProfil(res.data);
         setLoading(false);

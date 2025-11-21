@@ -22,7 +22,7 @@ export default function Contrat() {
   useEffect(() => {
     const fetchEmployes = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/employes");
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/employes`);
         setEmployes(res.data);
       } catch (error) {
         console.error(error);
@@ -35,7 +35,7 @@ export default function Contrat() {
   useEffect(() => {
     const fetchContrats = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/contrats");
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/contrats`);
         setContrats(res.data);
       } catch (error) {
         console.error(error);
@@ -46,7 +46,7 @@ export default function Contrat() {
   
 const generatePDF = async (id) => {
   try {
-    const response = await axios.get(`http://127.0.0.1:8000/api/contrats/${id}/pdf`, {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}api/contrats/${id}/pdf`, {
       responseType: "blob",
     });
 
@@ -83,6 +83,14 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
         className="crud-btn-icon pdf"
         onClick={() => generatePDF(row.id_contrat)}
         title="Télécharger PDF"
+         style={{
+              color: "#03e34aff",
+              textDecoration: "none",
+              fontWeight: "600",
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
       >
         <FaFilePdf />
       </button>
@@ -128,7 +136,7 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://127.0.0.1:8000/api/contrats/${id}`);
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/contrats/${id}`);
           setContrats(contrats.filter((c) => c.id_contrat !== id));
           Swal.fire("Supprimé !", "Contrat supprimé.", "success");
         } catch (error) {
@@ -150,13 +158,13 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
 
     try {
       if (editingId) {
-        await axios.put(`http://127.0.0.1:8000/api/contrats/${editingId}`, data);
+        await axios.put(`${process.env.REACT_APP_API_URL}api/contrats/${editingId}`, data);
         setContrats(
           contrats.map((c) => (c.id_contrat === editingId ? { ...c, ...data, employe: employes.find(e => e.id_employe == employeId) } : c))
         );
         Swal.fire("Modifié !", "Contrat mis à jour.", "success");
       } else {
-        const res = await axios.post("http://127.0.0.1:8000/api/contrats", data);
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}api/contrats`, data);
         setContrats([...contrats, res.data]);
         Swal.fire("Ajouté !", "Contrat ajouté.", "success");
       }
@@ -218,17 +226,19 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
                 </select>
               </div>
 
-              <div className="crud-form-group">
-                <label>Employé</label>
-                <select value={employeId} onChange={(e) => setEmployeId(e.target.value)} required>
-                  <option value="">-- Sélectionnez un employé --</option>
-                  {employes.map((emp) => (
-                    <option key={emp.id_employe} value={emp.id_employe}>
-                      {emp.nom_employe} {emp.prenom_employe}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {!editingId && (
+                <div className="crud-form-group">
+                  <label>Employé</label>
+                  <select value={employeId} onChange={(e) => setEmployeId(e.target.value)} required>
+                    <option value="">-- Sélectionnez un employé --</option>
+                    {employes.map((emp) => (
+                      <option key={emp.id_employe} value={emp.id_employe}>
+                        {emp.nom_employe} {emp.prenom_employe}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="crud-form-actions">
                 <button type="button" className="crud-cancel-btn" onClick={() => setModalOpen(false)}>Annuler</button>

@@ -30,7 +30,7 @@ function MenuUser() {
       if (!data) return;
 
       axios
-        .get(`http://127.0.0.1:8000/api/user/${data.id_employe}/notifications/unread-count`)
+        .get(`${process.env.REACT_APP_API_URL}api/user/${data.id_employe}/notifications/unread-count`)
         .then((res) => setNotifCount(res.data))
         .catch((err) => console.log(err));
     };
@@ -48,7 +48,7 @@ function MenuUser() {
       setUserData(data);
 
       axios
-        .get(`http://127.0.0.1:8000/api/user/${data.id_employe}/notifications/unread-count`)
+        .get(`${process.env.REACT_APP_API_URL}api/user/${data.id_employe}/notifications/unread-count`)
         .then((res) => setNotifCount(res.data))
         .catch((err) => console.log(err));
     }

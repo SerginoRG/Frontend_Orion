@@ -25,12 +25,12 @@ function BulletinSalaire() {
   }, []);
 
   const fetchBulletins = async () => {
-    const res = await axios.get("http://127.0.0.1:8000/api/bulletins");
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}api/bulletins`);
     setBulletins(res.data);
   };
 
   const fetchSalaires = async () => {
-    const res = await axios.get("http://127.0.0.1:8000/api/salaires");
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}api/salaires`);
     setSalaireList(res.data);
   };
 
@@ -41,13 +41,13 @@ function BulletinSalaire() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://127.0.0.1:8000/api/bulletins", formData);
-      Swal.fire("✅ Succès", "Bulletin de salaire créé avec succès", "success");
+      await axios.post(`${process.env.REACT_APP_API_URL}api/bulletins`, formData);
+      Swal.fire("Succès", "Bulletin de salaire créé avec succès", "success");
       fetchBulletins();
       setFormData({ reference_bulletin: "", date_generation: "", salaire_id: "" });
       setShowModal(false);
     } catch (error) {
-      Swal.fire("❌ Erreur", error.response?.data?.message || "Échec de création", "error");
+      Swal.fire("Erreur", error.response?.data?.message || "Échec de création", "error");
     }
   };
 
@@ -55,7 +55,7 @@ function BulletinSalaire() {
     e.preventDefault();
 
     if (!selectedFile) {
-      Swal.fire("⚠️ Oups", "Veuillez sélectionner un fichier PDF", "warning");
+      Swal.fire("Oups", "Veuillez sélectionner un fichier PDF", "warning");
       return;
     }
 
@@ -64,17 +64,17 @@ function BulletinSalaire() {
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/bulletins/${selectedBulletinId}/upload`,
+        `${process.env.REACT_APP_API_URL}api/bulletins/${selectedBulletinId}/upload`,
         formDataUpload,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      Swal.fire("✅ Succès", "PDF ajouté avec succès", "success");
+      Swal.fire("Succès", "PDF ajouté avec succès", "success");
       fetchBulletins();
       setShowUploadModal(false);
       setSelectedFile(null);
     } catch (error) {
-      Swal.fire("❌ Erreur", "Impossible de téléverser le PDF", "error");
+      Swal.fire("Erreur", "Impossible de téléverser le PDF", "error");
     }
   };
 
@@ -87,7 +87,7 @@ function BulletinSalaire() {
   const generatePDF = async (id) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/bulletins/${id}/generate-pdf`,
+        `${process.env.REACT_APP_API_URL}api/bulletins/${id}/generate-pdf`,
         {
           responseType: "blob",
           validateStatus: (status) => status < 500,
@@ -165,7 +165,7 @@ function BulletinSalaire() {
       cell: (row) =>
         row.fichier_pdf ? (
           <a
-            href={`http://127.0.0.1:8000/storage/${row.fichier_pdf}`}
+            href={`${process.env.REACT_APP_API_URL}storage/${row.fichier_pdf}`}
             target="_blank"
             rel="noreferrer"
             style={{

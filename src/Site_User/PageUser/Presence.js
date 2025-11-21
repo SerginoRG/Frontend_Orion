@@ -34,13 +34,13 @@ function Presence() {
   const fetchHistorique = async () => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/presence/historique/${employeId}`
+        `${process.env.REACT_APP_API_URL}api/presence/historique/${employeId}`
       );
       const historiqueWithPeriod = res.data.map((item) => {
   const arrivalHour = parseInt(item.heure_arrivee?.split(":")[0]);
-  const arrivalMin = parseInt(item.heure_arrivee?.split(":")[1]) || 0;
-  const departHour = parseInt(item.heure_depart?.split(":")[0]);
-  const departMin = parseInt(item.heure_depart?.split(":")[1]) || 0;
+  // const arrivalMin = parseInt(item.heure_arrivee?.split(":")[1]) || 0;
+  // const departHour = parseInt(item.heure_depart?.split(":")[0]);
+  // const departMin = parseInt(item.heure_depart?.split(":")[1]) || 0;
 
 let heuresEffectuees = 0;
 
@@ -135,7 +135,7 @@ let heuresEffectuees = 0;
 
     try {
       setIsButtonDisabledTemp(true);
-      await axios.post("http://127.0.0.1:8000/api/presence/arrivee", {
+      await axios.post(`${process.env.REACT_APP_API_URL}api/presence/arrivee`, {
         employe_id: employeId,
       });
 
@@ -161,7 +161,7 @@ let heuresEffectuees = 0;
 
     try {
       setIsButtonDisabledTemp(true);
-      await axios.post("http://127.0.0.1:8000/api/presence/depart", {
+      await axios.post(`${process.env.REACT_APP_API_URL}api/presence/depart`, {
         employe_id: employeId,
       });
 
@@ -305,7 +305,7 @@ let heuresEffectuees = 0;
 
   return (
     <div className="container">
-      <h2>Suivi de Présence</h2>
+     <h2>Pointage de présence</h2>
       <div className="user-info">
         <p>
           Connecté en tant que :{" "}

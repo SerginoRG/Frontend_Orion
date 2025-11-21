@@ -75,7 +75,7 @@ useEffect(() => {
 
   const fetchPresences = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/admin/presences");
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}api/admin/presences`);
       setPresences(response.data);
       applyFilters(response.data);
     } catch (error) {
@@ -121,7 +121,7 @@ const handleToggleFilter = async () => {
 
   try {
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/admin/marquer-absents/${periode}`
+      `${process.env.REACT_APP_API_URL}api/admin/marquer-absents/${periode}`
     );
 
     Swal.fire(
@@ -174,9 +174,9 @@ const handleToggleFilter = async () => {
   const enrichPresencesData = (data) => {
     return data.map((item) => {
       const arrivalHour = parseInt(item.heure_arrivee?.split(":")[0]);
-      const arrivalMin = parseInt(item.heure_arrivee?.split(":")[1]) || 0;
-      const departHour = parseInt(item.heure_depart?.split(":")[0]);
-      const departMin = parseInt(item.heure_depart?.split(":")[1]) || 0;
+      // const arrivalMin = parseInt(item.heure_arrivee?.split(":")[1]) || 0;
+      // const departHour = parseInt(item.heure_depart?.split(":")[0]);
+      // const departMin = parseInt(item.heure_depart?.split(":")[1]) || 0;
 
       let heuresEffectuees = 0;
 

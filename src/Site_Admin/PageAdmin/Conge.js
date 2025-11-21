@@ -21,7 +21,7 @@ export default function Conge() {
   // Récupérer tous les soldes
   const fetchSolde = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/solde-conge");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/solde-conge`);
       setSoldeList(res.data);
     } catch (error) {
       console.error("Erreur chargement solde :", error);
@@ -31,7 +31,7 @@ export default function Conge() {
   // Récupérer tous les employés
   const fetchEmployes = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/employes");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/employes`);
       setEmployes(res.data);
     } catch (error) {
       console.error("Erreur chargement employés :", error);
@@ -57,7 +57,7 @@ export default function Conge() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://127.0.0.1:8000/api/solde-conge/${id}`);
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/solde-conge/${id}`);
           Swal.fire("Supprimé !", "Solde supprimé avec succès.", "success");
           fetchSolde();
         } catch (err) {
@@ -76,7 +76,7 @@ export default function Conge() {
     };
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/solde-conge/create", payload);
+      await axios.post(`${process.env.REACT_APP_API_URL}api/solde-conge/create`, payload);
       Swal.fire("Ajouté !", "Solde ajouté avec succès.", "success");
       setModalOpen(false);
       fetchSolde();

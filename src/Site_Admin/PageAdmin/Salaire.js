@@ -34,7 +34,7 @@ function Salaire() {
 
   const fetchSalaires = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/salaires");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/salaires`);
       setSalaires(res.data);
     } catch (error) {
       console.error("Erreur de chargement des salaires :", error);
@@ -43,7 +43,7 @@ function Salaire() {
 
   const fetchEmployes = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/employes");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/employes`);
       setEmployes(res.data);
     } catch (error) {
       console.error("Erreur de chargement des employés :", error);
@@ -68,7 +68,7 @@ function Salaire() {
 
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/salaires/calculer-retenues-preview",
+      `${process.env.REACT_APP_API_URL}api/salaires/calculer-retenues-preview`,
       { employe_id, mois_salaire, annee_salaire, salaire_base }
     );
 
@@ -211,7 +211,7 @@ function Salaire() {
 
       console.log("📤 Données envoyées:", dataToSend);
 
-      const response = await axios.post("http://localhost:8000/api/salaires", dataToSend);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}api/salaires`, dataToSend);
       console.log("✅ Réponse:", response.data);
       
       Swal.fire("Succès", "Salaire ajouté avec succès", "success");
@@ -246,7 +246,7 @@ function Salaire() {
       cancelButtonText: "Annuler",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await axios.delete(`http://localhost:8000/api/salaires/${id}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}api/salaires/${id}`);
         Swal.fire("Supprimé", "Le salaire a été supprimé", "success");
         fetchSalaires();
       }

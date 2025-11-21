@@ -25,7 +25,7 @@ function Acceuil() {
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/dashboard/statistics");
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}api/dashboard/statistics`);
       setStatistics(response.data);
     } catch (err) {
       console.error("Erreur chargement statistiques:", err);
@@ -34,7 +34,7 @@ function Acceuil() {
 
   const fetchPresenceStats = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/dashboard/presence-stats");
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}api/dashboard/presence-stats`);
       setPresenceStats(response.data);
     } catch (err) {
       console.error("Erreur chargement stats présence:", err);
@@ -43,7 +43,7 @@ function Acceuil() {
 
   const fetchMasseStats = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/dashboard/masse-salariale");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}api/dashboard/masse-salariale`);
     setMasseStats(response.data);
   } catch (err) {
     console.error("Erreur chargement masse salariale:", err);

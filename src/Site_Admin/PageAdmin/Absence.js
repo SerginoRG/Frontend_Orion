@@ -28,7 +28,7 @@ function Absence() {
   const fetchAbsences = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://127.0.0.1:8000/api/admin/absences");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}api/admin/absences`);
       if (Array.isArray(res.data)) {
         setAbsences(res.data);
         setFilteredAbsences(res.data);
@@ -61,7 +61,7 @@ function Absence() {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await axios.put(`http://127.0.0.1:8000/api/admin/absences/${id}/statut`, { statut_absence: newStatus });
+      await axios.put(`${process.env.REACT_APP_API_URL}api/admin/absences/${id}/statut`, { statut_absence: newStatus });
       Swal.fire("Succès", "Le statut a été mis à jour", "success");
       fetchAbsences();
     } catch (err) {
@@ -80,7 +80,7 @@ function Absence() {
   };
 
   const generatePDF = (id_absence) => {
-    window.open(`http://127.0.0.1:8000/api/admin/absence/${id_absence}/pdf`, "_blank");
+    window.open(`${process.env.REACT_APP_API_URL}api/admin/absence/${id_absence}/pdf`, "_blank");
   };
 
   const columns = [
@@ -179,7 +179,7 @@ function Absence() {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         contentLabel="Détails de l'absence"
-        className="modal-content"
+        className="modal-content-admin"
         overlayClassName="modal-overlay"
       >
         {selectedAbsence && (
@@ -191,7 +191,7 @@ function Absence() {
             <p><strong>Nombre de jours:</strong> {calculateDays(selectedAbsence.date_debut, selectedAbsence.date_fin)}</p>
             <p><strong>Motif:</strong> {selectedAbsence.motif_absence}</p>
             <p><strong>Statut:</strong> {selectedAbsence.statut_absence}</p>
-            <p><strong>Justificatif:</strong> {selectedAbsence.justificatif ? <a href={`http://127.0.0.1:8000/storage/${selectedAbsence.justificatif}`} target="_blank" rel="noopener noreferrer">📄 Voir</a> : 'Aucun'}</p>
+            <p><strong>Justificatif:</strong> {selectedAbsence.justificatif ? <a href={`${process.env.REACT_APP_API_URL}storage/${selectedAbsence.justificatif}`} target="_blank" rel="noopener noreferrer">📄 Voir</a> : 'Aucun'}</p>
             <p><strong>Message:</strong> {selectedAbsence.message || '-'}</p>
             <button onClick={closeModal}>Fermer</button>
           </div>
