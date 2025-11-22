@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
@@ -31,63 +31,61 @@ function Presence() {
     }
   }, [employeId]);
 
-  const fetchHistorique = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/presence/historique/${employeId}`
-      );
-      const historiqueWithPeriod = res.data.map((item) => {
-  const arrivalHour = parseInt(item.heure_arrivee?.split(":")[0]);
-  // const arrivalMin = parseInt(item.heure_arrivee?.split(":")[1]) || 0;
-  // const departHour = parseInt(item.heure_depart?.split(":")[0]);
-  // const departMin = parseInt(item.heure_depart?.split(":")[1]) || 0;
+  
 
-let heuresEffectuees = 0;
+// ... inside your component, before the useEffect that calls it:
 
-// ✅ Vérifier que les deux heures existent et sont valides
-        if (
-          item.heure_arrivee &&
-          item.heure_depart &&
-          item.heure_arrivee.includes(":") &&
-          item.heure_depart.includes(":")
-        ) {
-          const [arrH, arrM] = item.heure_arrivee.split(":").map(Number);
-          const [depH, depM] = item.heure_depart.split(":").map(Number);
+const fetchHistorique = useCallback(async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}api/presence/historique/${employeId}`
+    );
+    const historiqueWithPeriod = res.data.map((item) => {
+      const arrivalHour = parseInt(item.heure_arrivee?.split(":")[0]);
+      
+      let heuresEffectuees = 0;
 
-          // Calcul de la différence en minutes puis conversion en heures
-          const diff = (depH * 60 + depM) - (arrH * 60 + arrM);
-          if (!isNaN(diff) && diff > 0) {
-            heuresEffectuees = diff / 60;
-          }
+      if (
+        item.heure_arrivee &&
+        item.heure_depart &&
+        item.heure_arrivee.includes(":") &&
+        item.heure_depart.includes(":")
+      ) {
+        const [arrH, arrM] = item.heure_arrivee.split(":").map(Number);
+        const [depH, depM] = item.heure_depart.split(":").map(Number);
+
+        const diff = (depH * 60 + depM) - (arrH * 60 + arrM);
+        if (!isNaN(diff) && diff > 0) {
+          heuresEffectuees = diff / 60;
         }
+      }
 
-        // Conversion en format lisible
-        const hours = Math.floor(heuresEffectuees);
-        const minutes = Math.round((heuresEffectuees - hours) * 60);
-        const heuresFormat = heuresEffectuees > 0 ? `${hours}h ${minutes.toString().padStart(2, '0')}min` : "—";
+      const hours = Math.floor(heuresEffectuees);
+      const minutes = Math.round((heuresEffectuees - hours) * 60);
+      const heuresFormat = heuresEffectuees > 0 ? `${hours}h ${minutes.toString().padStart(2, '0')}min` : "—";
 
-        return {
-          ...item,
-          periode: arrivalHour >= 14 ? "apresmidi" : "matin",
-          heuresEffectuees: heuresEffectuees.toFixed(2), // valeur numérique pour le total
-          heuresEffectueesFormat: heuresFormat // format lisible pour l'affichage
-        };
-      });
+      return {
+        ...item,
+        periode: arrivalHour >= 14 ? "apresmidi" : "matin",
+        heuresEffectuees: heuresEffectuees.toFixed(2),
+        heuresEffectueesFormat: heuresFormat
+      };
+    });
 
-      setHistorique(historiqueWithPeriod);
-      setFilteredHistorique(historiqueWithPeriod);
-    } catch (err) {
-      console.error("Erreur lors du chargement de l'historique :", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    setHistorique(historiqueWithPeriod);
+    setFilteredHistorique(historiqueWithPeriod);
+  } catch (err) {
+    console.error("Erreur lors du chargement de l'historique :", err);
+  } finally {
+    setIsLoading(false);
+  }
+}, [employeId]); // fetchHistorique now depends on employeId
 
-  useEffect(() => {
-    if (employeId) {
-      fetchHistorique();
-    }
-  }, [employeId]);
+useEffect(() => {
+  if (employeId) {
+    fetchHistorique();
+  }
+}, [employeId, fetchHistorique]); // Now includes fetchHistorique
 
   // ✅ Détermination de la période active
   useEffect(() => {
@@ -175,13 +173,22 @@ let heuresEffectuees = 0;
     }
   };
 
+
   const columns = [
     {
       name: "Date",
       selector: (row) => new Date(row.date_presence).toLocaleDateString(),
       sortable: true,
     },
-      { name: "Période", selector: (row) => row.periode || "—", center: true },
+     { 
+      name: "Période", 
+      selector: (row) => {
+        if (!row.periode) return "—";
+        return row.periode.toLowerCase() === "matin" ? "Matin" : "Après-midi";
+      }, 
+      center: true 
+    },
+
     { name: "Heure d'arrivée", selector: (row) => row.heure_arrivee || "--:--" },
     { name: "Heures effectuées", selector: (row) => row.heuresEffectueesFormat || "—", center: true },
     {

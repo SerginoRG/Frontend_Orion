@@ -11,7 +11,6 @@ function Presence() {
   const [dateFin, setDateFin] = useState("");
   const [searchNom, setSearchNom] = useState("");
   const [isButtonActive, setIsButtonActive] = useState(false);
-  const [currentPeriode, setCurrentPeriode] = useState("");
 
   // ✅ Déterminer la période selon l'heure actuelle
   const getCurrentPeriode = () => {
@@ -35,53 +34,31 @@ function Presence() {
 
   const [filterMode, setFilterMode] = useState(getCurrentPeriode);
 
-  // ✅ Activation bouton selon les plages horaires
-useEffect(() => {
-  const checkButtonAvailability = () => {
-    const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
-
-    const isInMorningSlot = currentTime >= 720 && currentTime < 780;
-    const isInAfternoonSlot = currentTime >= 1080 && currentTime < 1140;
-
-    let periode = "";
-    if (isInMorningSlot) {
-      periode = "matin";
-    } else if (isInAfternoonSlot) {
-      periode = "apresmidi";
-    } else {
-      periode = getCurrentPeriode();
-    }
-
-    // ✅ Vérifier si la période a déjà été marquée
-    const isMarked = sessionStorage.getItem(`presenceMarked_${periode}`) === "true";
-
-    // Activer le bouton seulement si c'est la plage horaire ET non marqué
-    setIsButtonActive((isInMorningSlot || isInAfternoonSlot) && !isMarked);
-    setCurrentPeriode(periode);
-    setFilterMode(periode);
-  };
-
-  checkButtonAvailability();
-  const interval = setInterval(checkButtonAvailability, 30000); // mise à jour toutes les 30s
-  return () => clearInterval(interval);
-}, []);
-
-
-  // ✅ Charger les présences
+  // ✅ Charger les présences - moved inside useEffect
   useEffect(() => {
+    const fetchPresences = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}api/admin/presences`);
+        setPresences(response.data);
+        
+        // Apply filters inline to avoid dependency issues
+        let result = [...response.data];
+        if (searchNom.trim()) {
+          result = result.filter((p) =>
+            p.employe &&
+            `${p.employe.nom_employe} ${p.employe.prenom_employe}`
+              .toLowerCase()
+              .includes(searchNom.toLowerCase())
+          );
+        }
+        setFilteredPresences(result);
+      } catch (error) {
+        Swal.fire("Erreur", "Impossible de charger les présences.", "error");
+      }
+    };
+
     fetchPresences();
   }, []);
-
-  const fetchPresences = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}api/admin/presences`);
-      setPresences(response.data);
-      applyFilters(response.data);
-    } catch (error) {
-      Swal.fire("Erreur", "Impossible de charger les présences.", "error");
-    }
-  };
 
   // ✅ Filtrage global
   const applyFilters = (data) => {
@@ -106,50 +83,87 @@ useEffect(() => {
     setFilteredPresences(result);
   };
 
-  // ✅ Marquer les absents
-const handleToggleFilter = async () => {
-  if (!isButtonActive) {
-    Swal.fire(
-      "Action non disponible",
-      "Le bouton est disponible uniquement de 12h-13h (matin) et 18h-19h (après-midi).",
-      "warning"
-    );
-    return;
-  }
+  // ✅ Activation bouton selon les plages horaires
+  useEffect(() => {
+    const checkButtonAvailability = () => {
+      const now = new Date();
+      const currentTime = now.getHours() * 60 + now.getMinutes();
 
-  const periode = filterMode;
+      const isInMorningSlot = currentTime >= 720 && currentTime < 780;
+      const isInAfternoonSlot = currentTime >= 1080 && currentTime < 1140;
 
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}api/admin/marquer-absents/${periode}`
-    );
+      let periode = "";
+      if (isInMorningSlot) {
+        periode = "matin";
+      } else if (isInAfternoonSlot) {
+        periode = "apresmidi";
+      } else {
+        periode = getCurrentPeriode();
+      }
 
-    Swal.fire(
-      "Succès",
-      `${response.data.nombre_absents} absent(s) enregistré(s) pour : ${periode}`,
-      "success"
-    );
+      // ✅ Vérifier si la période a déjà été marquée
+      const isMarked = sessionStorage.getItem(`presenceMarked_${periode}`) === "true";
 
-    // ✅ Désactiver le bouton après clic
-    setIsButtonActive(false);
+      // Activer le bouton seulement si c'est la plage horaire ET non marqué
+      setIsButtonActive((isInMorningSlot || isInAfternoonSlot) && !isMarked);
+      setFilterMode(periode);
+    };
 
-    // ✅ Sauvegarder en sessionStorage
-    sessionStorage.setItem(`presenceMarked_${periode}`, "true");
+    checkButtonAvailability();
+    const interval = setInterval(checkButtonAvailability, 30000); // mise à jour toutes les 30s
+    return () => clearInterval(interval);
+  }, []);
 
-    fetchPresences();
-  } catch (error) {
-    Swal.fire(
-      "Erreur",
-      error.response?.data?.message || "Impossible d'enregistrer les absents.",
-      "error"
-    );
-  }
-};
-
-
+  // ✅ Apply filters when searchNom or presences change
   useEffect(() => {
     applyFilters(presences);
-  }, [searchNom, presences]);
+  }, [searchNom, presences, dateDebut, dateFin]);
+
+  // ✅ Marquer les absents
+  const handleToggleFilter = async () => {
+    if (!isButtonActive) {
+      Swal.fire(
+        "Action non disponible",
+        "Le bouton est disponible uniquement de 12h-13h (matin) et 18h-19h (après-midi).",
+        "warning"
+      );
+      return;
+    }
+
+    const periode = filterMode;
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}api/admin/marquer-absents/${periode}`
+      );
+
+      Swal.fire(
+        "Succès",
+        `${response.data.nombre_absents} absent(s) enregistré(s) pour : ${periode}`,
+        "success"
+      );
+
+      // ✅ Désactiver le bouton après clic
+      setIsButtonActive(false);
+
+      // ✅ Sauvegarder en sessionStorage
+      sessionStorage.setItem(`presenceMarked_${periode}`, "true");
+
+      // Reload presences
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}api/admin/presences`);
+        setPresences(res.data);
+      } catch (error) {
+        console.error("Erreur lors du rechargement des présences:", error);
+      }
+    } catch (error) {
+      Swal.fire(
+        "Erreur",
+        error.response?.data?.message || "Impossible d'enregistrer les absents.",
+        "error"
+      );
+    }
+  };
 
   const handleFiltrerParDate = () => {
     if (!dateDebut || !dateFin) {
@@ -174,9 +188,6 @@ const handleToggleFilter = async () => {
   const enrichPresencesData = (data) => {
     return data.map((item) => {
       const arrivalHour = parseInt(item.heure_arrivee?.split(":")[0]);
-      // const arrivalMin = parseInt(item.heure_arrivee?.split(":")[1]) || 0;
-      // const departHour = parseInt(item.heure_depart?.split(":")[0]);
-      // const departMin = parseInt(item.heure_depart?.split(":")[1]) || 0;
 
       let heuresEffectuees = 0;
 
@@ -204,9 +215,10 @@ const handleToggleFilter = async () => {
 
       return {
         ...item,
-        periode: arrivalHour >= 14 ? "apresmidi" : "matin",
-        heuresEffectuees: heuresEffectuees.toFixed(2), // valeur numérique pour le total
-        heuresEffectueesFormat: heuresFormat // format lisible pour l'affichage
+      // ✅ Utiliser la période depuis la base si elle existe
+      periode: item.periode || (parseInt(item.heure_arrivee?.split(":")[0]) >= 14 ? "apresmidi" : "matin"),
+      heuresEffectuees: heuresEffectuees.toFixed(2),
+      heuresEffectueesFormat: heuresFormat
       };
     });
   };
@@ -220,7 +232,14 @@ const handleToggleFilter = async () => {
     { name: "Date", selector: (row) => formatDate(row.date_presence), sortable: true },
     { name: "Heure Arrivée", selector: (row) => row.heure_arrivee || "—", center: true },
     { name: "Heure Départ", selector: (row) => row.heure_depart || "—", center: true },
-    { name: "Période", selector: (row) => row.periode || "—", center: true },
+    { 
+      name: "Période", 
+      selector: (row) => {
+        if (!row.periode) return "—";
+        return row.periode.toLowerCase() === "matin" ? "Matin" : "Après-midi";
+      }, 
+      center: true 
+    },
     { name: "Heures effectuées", selector: (row) => row.heuresEffectueesFormat || "—", center: true },
     {
       name: "Statut",
@@ -275,7 +294,6 @@ const handleToggleFilter = async () => {
             ? "Marquer Absents Matin" 
             : "Marquer Absents Après-midi"}
         </button>
-
 
         <div style={{ marginTop: '8px', fontSize: '0.9em', color: !isButtonActive ? '#666' : '#000' }}>
           <strong>Période actuelle :</strong> {filterMode === "matin" ? "Matin (12h-13h)" : "Après-midi (18h-19h)"}
