@@ -66,7 +66,7 @@ const fetchHistorique = useCallback(async () => {
 
       return {
         ...item,
-        periode: arrivalHour >= 14 ? "apresmidi" : "matin",
+       periode: item.periode || (parseInt(item.heure_arrivee?.split(":")[0]) >= 14 ? "apresmidi" : "matin"),
         heuresEffectuees: heuresEffectuees.toFixed(2),
         heuresEffectueesFormat: heuresFormat
       };

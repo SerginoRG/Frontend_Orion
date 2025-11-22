@@ -10,6 +10,7 @@ function Presence() {
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
   const [searchNom, setSearchNom] = useState("");
+  const [filterStatut, setFilterStatut] = useState(""); // ✅ NOUVEAU : Filtre statut
   const [isButtonActive, setIsButtonActive] = useState(false);
 
   // ✅ Déterminer la période selon l'heure actuelle
@@ -17,31 +18,26 @@ function Presence() {
     const now = new Date();
     const currentTime = now.getHours() * 60 + now.getMinutes();
     
-    // 12h00-13h00 (720-780 minutes) → période matin
     const isInMorningSlot = currentTime >= 720 && currentTime < 780;
-    
-    // 18h00-19h00 (1080-1140 minutes) → période après-midi
     const isInAfternoonSlot = currentTime >= 1080 && currentTime < 1140;
     
     if (isInMorningSlot) return "matin";
     if (isInAfternoonSlot) return "apresmidi";
     
-    // Hors plage horaire : déterminer la prochaine période
-    if (currentTime < 720) return "matin"; // Avant 12h → prochaine = matin
-    if (currentTime >= 780 && currentTime < 1080) return "apresmidi"; // Entre 13h et 18h → prochaine = après-midi
-    return "matin"; // Après 19h → prochaine = matin (lendemain)
+    if (currentTime < 720) return "matin";
+    if (currentTime >= 780 && currentTime < 1080) return "apresmidi";
+    return "matin";
   };
 
   const [filterMode, setFilterMode] = useState(getCurrentPeriode);
 
-  // ✅ Charger les présences - moved inside useEffect
+  // ✅ Charger les présences
   useEffect(() => {
     const fetchPresences = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}api/admin/presences`);
         setPresences(response.data);
         
-        // Apply filters inline to avoid dependency issues
         let result = [...response.data];
         if (searchNom.trim()) {
           result = result.filter((p) =>
@@ -60,7 +56,7 @@ function Presence() {
     fetchPresences();
   }, []);
 
-  // ✅ Filtrage global
+  // ✅ Filtrage global (avec statut)
   const applyFilters = (data) => {
     let result = [...data];
 
@@ -77,6 +73,14 @@ function Presence() {
         `${p.employe.nom_employe} ${p.employe.prenom_employe}`
           .toLowerCase()
           .includes(searchNom.toLowerCase())
+      );
+    }
+
+    // ✅ NOUVEAU : Filtrage par statut
+    if (filterStatut) {
+      result = result.filter((p) => 
+        p.statut_presence && 
+        p.statut_presence.toLowerCase().trim() === filterStatut.toLowerCase()
       );
     }
 
@@ -101,23 +105,21 @@ function Presence() {
         periode = getCurrentPeriode();
       }
 
-      // ✅ Vérifier si la période a déjà été marquée
       const isMarked = sessionStorage.getItem(`presenceMarked_${periode}`) === "true";
 
-      // Activer le bouton seulement si c'est la plage horaire ET non marqué
       setIsButtonActive((isInMorningSlot || isInAfternoonSlot) && !isMarked);
       setFilterMode(periode);
     };
 
     checkButtonAvailability();
-    const interval = setInterval(checkButtonAvailability, 30000); // mise à jour toutes les 30s
+    const interval = setInterval(checkButtonAvailability, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  // ✅ Apply filters when searchNom or presences change
+  // ✅ Apply filters when dependencies change (ajout de filterStatut)
   useEffect(() => {
     applyFilters(presences);
-  }, [searchNom, presences, dateDebut, dateFin]);
+  }, [searchNom, presences, dateDebut, dateFin, filterStatut]);
 
   // ✅ Marquer les absents
   const handleToggleFilter = async () => {
@@ -143,13 +145,9 @@ function Presence() {
         "success"
       );
 
-      // ✅ Désactiver le bouton après clic
       setIsButtonActive(false);
-
-      // ✅ Sauvegarder en sessionStorage
       sessionStorage.setItem(`presenceMarked_${periode}`, "true");
 
-      // Reload presences
       try {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}api/admin/presences`);
         setPresences(res.data);
@@ -181,17 +179,15 @@ function Presence() {
   const handleResetDates = () => {
     setDateDebut("");
     setDateFin("");
+    setFilterStatut(""); // ✅ NOUVEAU : Réinitialiser aussi le statut
     applyFilters(presences);
   };
 
-  // ✅ Fonction pour enrichir les données avec période et heures effectuées
+  // ✅ Fonction pour enrichir les données
   const enrichPresencesData = (data) => {
     return data.map((item) => {
-      const arrivalHour = parseInt(item.heure_arrivee?.split(":")[0]);
-
       let heuresEffectuees = 0;
 
-      // ✅ Vérifier que les deux heures existent et sont valides
       if (
         item.heure_arrivee &&
         item.heure_depart &&
@@ -201,29 +197,25 @@ function Presence() {
         const [arrH, arrM] = item.heure_arrivee.split(":").map(Number);
         const [depH, depM] = item.heure_depart.split(":").map(Number);
 
-        // Calcul de la différence en minutes puis conversion en heures
         const diff = (depH * 60 + depM) - (arrH * 60 + arrM);
         if (!isNaN(diff) && diff > 0) {
           heuresEffectuees = diff / 60;
         }
       }
 
-      // Conversion en format lisible
       const hours = Math.floor(heuresEffectuees);
       const minutes = Math.round((heuresEffectuees - hours) * 60);
       const heuresFormat = heuresEffectuees > 0 ? `${hours}h ${minutes.toString().padStart(2, '0')}min` : "—";
 
       return {
         ...item,
-      // ✅ Utiliser la période depuis la base si elle existe
-      periode: item.periode || (parseInt(item.heure_arrivee?.split(":")[0]) >= 14 ? "apresmidi" : "matin"),
-      heuresEffectuees: heuresEffectuees.toFixed(2),
-      heuresEffectueesFormat: heuresFormat
+        periode: item.periode || (parseInt(item.heure_arrivee?.split(":")[0]) >= 14 ? "apresmidi" : "matin"),
+        heuresEffectuees: heuresEffectuees.toFixed(2),
+        heuresEffectueesFormat: heuresFormat
       };
     });
   };
 
-  // ✅ Enrichir les données filtrées
   const enrichedPresences = enrichPresencesData(filteredPresences);
 
   const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') : "N/A");
@@ -265,10 +257,7 @@ function Presence() {
     },
   ];
 
-  // ✅ Calcul du total des heures
   const totalHeures = enrichedPresences.reduce((sum, item) => sum + parseFloat(item.heuresEffectuees || 0), 0);
-
-  // Conversion du total en format lisible
   const totalHours = Math.floor(totalHeures);
   const totalMinutes = Math.round((totalHeures - totalHours) * 60);
   const totalFormat = `${totalHours}h ${totalMinutes.toString().padStart(2, '0')}min`;
@@ -310,6 +299,27 @@ function Presence() {
           value={searchNom}
           onChange={(e) => setSearchNom(e.target.value)}
         />
+      </div>
+
+      {/* ✅ NOUVEAU : Filtre par statut */}
+      <div className="filtre-statut-admin" style={{ marginBottom: '15px', textAlign: 'center' }}>
+        <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Statut : </label>
+        <select 
+          value={filterStatut} 
+          onChange={(e) => setFilterStatut(e.target.value)}
+          style={{
+            padding: '8px 12px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            fontSize: '14px',
+            cursor: 'pointer'
+          }}
+        >
+          <option value="">Tous les statuts</option>
+          <option value="présent">Présent</option>
+          <option value="absent">Absent</option>
+          <option value="En retard">En Retard</option>
+        </select>
       </div>
 
       {/* Filtre par dates */}
