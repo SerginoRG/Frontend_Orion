@@ -38,25 +38,7 @@ export default function Absence() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === "message") {
-      const words = value.trim().split(/\s+/);
-      if (words.length > 20) {
-        setFormData({
-          ...formData,
-          [name]: words.slice(0, 20).join(" "),
-        });
-        return;
-      }
-    }
-
-    setFormData({
-      ...formData,
-      [name]: name === "justificatif" ? files[0] : value,
-    });
-  };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -190,6 +172,24 @@ export default function Absence() {
     },
   ];
 
+ const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "justificatif") {
+      setFormData({ ...formData, [name]: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+ const handleMessageChange = (e) => {
+    const value = e.target.value;
+    const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
+
+    if (wordCount <= 30) {
+      setFormData({ ...formData, message: value });
+    }
+  };
+
   return (
     <div className="absence-container">
       <h2 className="absence-title">Demandes d'absence</h2>
@@ -226,7 +226,7 @@ export default function Absence() {
                 </select>
 
                 <label>Message :</label>
-                <textarea name="message" value={formData.message} onChange={handleChange} />
+                <textarea name="message" value={formData.message} onChange={handleMessageChange} />
 
                 <label>Justificatif :</label>
                 <input type="file" name="justificatif" onChange={handleChange} />

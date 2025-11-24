@@ -67,9 +67,9 @@ function Profil() {
               <td>{new Date(profil.employe.date_embauche).toLocaleDateString("fr-FR")}</td>
             </tr>
              <tr>
-      <td><strong>Jours restants :</strong></td>
-      <td><b style={{ color: "green" }}>{profil.solde_conge.jours_restants} jours</b></td>
-    </tr>
+              <td><strong>Jours restants :</strong></td>
+              <td><b style={{ color: "green" }}>{profil.solde_conge?.jours_restants ?? 'Null'} jours</b></td>
+            </tr>
             <tr>
               <td><strong>Salaire de base :</strong></td>
               <td>{profil.employe.salaire_base} Ar</td>

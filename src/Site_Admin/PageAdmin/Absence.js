@@ -170,7 +170,7 @@ function Absence() {
           pagination
           highlightOnHover
           responsive
-          noDataComponent="📋 Aucune absence trouvée"
+          noDataComponent=" Aucune absence trouvée"
         />
       )}
 

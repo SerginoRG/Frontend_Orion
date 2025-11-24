@@ -526,3 +526,119 @@
     padding: 15px;
   }
 }
+
+
+/* ===== PROFIL EMPLOYÉ STYLE ===== */
+
+.profil-employe {
+  padding: 0 !important;
+}
+
+/* Bandeau rose (comme l’image) */
+.profil-header-banner {
+  background: #ffe3e3;
+  padding: 30px;
+  border-radius: 20px 20px 0 0;
+}
+
+/* Contenu du header */
+.profil-header-info {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* Avatar */
+.profil-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+
+/* Nom */
+.profil-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Matricule */
+.profil-matricule {
+  color: #555;
+  margin: 3px 0;
+}
+
+/* Badge statut */
+.profil-status {
+  display: inline-block;
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  margin-top: 5px;
+  text-transform: capitalize;
+}
+
+.profil-status.active {
+  background: #d4f8da;
+  color: #1b8f2d;
+}
+
+.profil-status.inactive {
+  background: #ffe2e2;
+  color: #d00000;
+}
+
+/* Onglets */
+.profil-tabs {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+  background: #f8f8f8;
+  padding: 10px;
+}
+
+.profil-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+}
+
+.profil-tab.active {
+  background: white;
+  border: 2px solid #ddd;
+}
+
+/* Contenu */
+.profil-content {
+  padding: 25px;
+}
+
+/* Titres des sections */
+.profil-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Grille pour informations */
+.profil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 25px;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .profil-grid {
+    grid-template-columns: 1fr;
+  }
+}

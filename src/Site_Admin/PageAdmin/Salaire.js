@@ -81,7 +81,7 @@ function Salaire() {
       salaire_net: calculSalaireNet(prev.salaire_base, prev.primes_salaire, retenues, prev.cnaps, prev.medical, prev.irsa)
     }));
 
-    setRetenuesInfo(`📊 Détails: ${data.nb_absences} absence(s) + ${data.nb_retards} retard(s) = ${retenues} Ar`);
+    setRetenuesInfo(` Détails: ${data.nb_absences} absence(s) + ${data.nb_retards} retard(s) = ${retenues} Ar`);
   } catch (error) {
     console.error("Erreur calcul retenues:", error);
     setRetenuesInfo("❌ Erreur lors du calcul automatique");

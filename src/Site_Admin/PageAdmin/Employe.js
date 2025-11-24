@@ -29,6 +29,7 @@ export default function Employe() {
   const [posteEmploye, setPosteEmploye] = useState("");
   const [salaireBaseEmploye, setSalaireBaseEmploye] = useState("");
   const [photoProfilEmploye, setPhotoProfilEmploye] = useState(null);
+  const [statutEmploye, setStatutEmploye] = useState("");
 
   // Charger le nom du service
   useEffect(() => {
@@ -126,6 +127,7 @@ export default function Employe() {
     setPosteEmploye(row.poste_employe);
     setSalaireBaseEmploye(row.salaire_base_employe);
     setPhotoProfilEmploye(null);
+    setStatutEmploye(row.statut_employe);
     setModalOpen(true);
   };
 
@@ -208,6 +210,7 @@ export default function Employe() {
     setPosteEmploye("");
     setSalaireBaseEmploye("");
     setPhotoProfilEmploye(null);
+    setStatutEmploye("");
   };
 
   // Validation CIN
@@ -257,6 +260,7 @@ const handleView = async (row) => {
   setPosteEmploye(row.poste_employe);
   setSalaireBaseEmploye(row.salaire_base_employe);
   setPhotoProfilEmploye(row.photo_profil_employe);
+    setStatutEmploye(row.statut_employe);
 
   try {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}api/contrats/employe/${row.id_employe}`);
@@ -400,69 +404,91 @@ const handleView = async (row) => {
       )}
 
 
-      {viewModalOpen && (
-            <div className="crud-modal-overlay">
-              <div className="crud-modal-content">
-                <span className="crud-close-btn" onClick={() => setViewModalOpen(false)}>
-                  &times;
-                </span>
-                <h2>Informations Employé</h2>
+     {viewModalOpen && (
+  <div className="crud-modal-overlay">
+    <div className="crud-modal-content profil-employe">
 
-                <div className="view-employe-container" style={{ display: "flex", gap: "20px" }}>
-                  {/* Texte à gauche */}
-                  {photoProfilEmploye && (
-                    <div>
-                      <img
-                        src={`${process.env.REACT_APP_API_URL}storage/${photoProfilEmploye}`}
-                        alt="profil"
-                        width="120"
-                        height="120"
-                        style={{ borderRadius: "50%", objectFit: "cover" }}
-                      />
-                    </div>
-                  )}
-                  <div style={{ flex: 1 }}>
-                    <p><strong>Matricule :</strong> {matriculeEmploye}</p>
-                    <p><strong>Nom :</strong> {nomEmploye}</p>
-                    <p><strong>Prénom :</strong> {prenomEmploye}</p>
-                    <p><strong>Date de naissance :</strong> {new Date(dateNaissanceEmploye).toLocaleDateString("fr-FR")}</p>
-                    <p><strong>CIN :</strong> {cinEmploye}</p>
-                    <p><strong>Adresse :</strong> {adresseEmploye}</p>
-                    <p><strong>Email :</strong> {emailEmploye}</p>
-                    <p><strong>Téléphone :</strong> {telephoneEmploye}</p>
-                    <p><strong>Date d'embauche :</strong> {new Date(dateEmbaucheEmploye).toLocaleDateString("fr-FR")}</p>
-                    <p><strong>Poste :</strong> {posteEmploye}</p>
-                    <p><strong>Salaire de base :</strong> {salaireBaseEmploye}</p>
-                    <p><strong>Service :</strong> {nomService}</p>
-                 <h3>Informations du contrat :</h3>
-                  {contrat ? (
-                    <div>
-                      <p><strong>Type :</strong> {contrat.type_contrat}</p>
-                      <p><strong>Date début :</strong> {contrat.date_debut_contrat}</p>
-                      <p><strong>Date fin :</strong> {contrat.date_fin_contrat}</p>
-                      <p><strong>Statut :</strong> {contrat.statut_contrat}</p>
-                    </div>
-                  ) : (
-                    <p style={{ color: "red" }}>Aucun contrat n'a été fait</p>
-                  )}
-                  </div>
+      <span className="crud-close-btn" onClick={() => setViewModalOpen(false)}>
+        &times;
+      </span>
 
-                  <div>
-                
-                </div>
+      {/* ==== HEADER BANDEAU ==== */}
+      <div className="profil-header-banner">
+        <div className="profil-header-info">
+          <img
+            src={
+              photoProfilEmploye
+                ? `${process.env.REACT_APP_API_URL}storage/${photoProfilEmploye}`
+                : "/avatar.png"
+            }
+            alt="profil"
+            className="profil-avatar"
+          />
 
+          <div>
+            <h2 className="profil-name">{nomEmploye} {prenomEmploye}</h2>
+            <p className="profil-matricule">{matriculeEmploye}</p>
 
-               
-                </div>
+            <span className={`profil-status ${statutEmploye === "actif" ? "active" : "inactive"}`}>
+              {statutEmploye}
+            </span>
+          </div>
+        </div>
+      </div>
 
-                <div style={{ textAlign: "right", marginTop: "20px" }}>
-                  <button className="crud-submit-btn" onClick={() => setViewModalOpen(false)}>
-                    Fermer
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+      {/* ==== ONGLET (simple, statique) ==== */}
+      {/* <div className="profil-tabs">
+        <div className="profil-tab active">Informations</div>
+        <div className="profil-tab">Contrat</div>
+      </div> */}
+
+      {/* ==== CONTENU ==== */}
+      <div className="profil-content">
+
+        <div className="profil-section-title">
+          <i className="fas fa-user"></i> Informations personnelles
+        </div>
+
+        <div className="profil-grid">
+          <p><strong>Date de naissance :</strong> {new Date(dateNaissanceEmploye).toLocaleDateString("fr-FR")}</p>
+          <p><strong>CIN :</strong> {cinEmploye}</p>
+          <p><strong>Adresse :</strong> {adresseEmploye}</p>
+          <p><strong>Email :</strong> {emailEmploye}</p>
+          <p><strong>Téléphone :</strong> {telephoneEmploye}</p>
+          <p><strong>Date d’embauche :</strong> {new Date(dateEmbaucheEmploye).toLocaleDateString("fr-FR")}</p>
+          <p><strong>Poste :</strong> {posteEmploye}</p>
+          <p><strong>Salaire de base :</strong> {salaireBaseEmploye}</p>
+          <p><strong>Service :</strong> {nomService}</p>
+        </div>
+
+        {/* ==== CONTRAT ==== */}
+        <div className="profil-section-title" style={{ marginTop: "20px" }}>
+          <i className="fas fa-file-contract"></i> Informations du contrat
+        </div>
+
+        {contrat ? (
+          <div className="profil-grid">
+            <p><strong>Type :</strong> {contrat.type_contrat}</p>
+            <p><strong>Date début :</strong> {contrat.date_debut_contrat}</p>
+            <p><strong>Date fin :</strong> {contrat.date_fin_contrat}</p>
+            <p><strong>Statut :</strong> {contrat.statut_contrat}</p>
+          </div>
+        ) : (
+          <p style={{ color: "red" }}>Aucun contrat n'a été fait</p>
+        )}
+
+      </div>
+
+      <div style={{ textAlign: "right", marginTop: "20px" }}>
+        <button className="crud-submit-btn" onClick={() => setViewModalOpen(false)}>
+          Fermer
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
+
 
 
 

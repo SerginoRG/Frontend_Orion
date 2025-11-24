@@ -67,7 +67,7 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
     { name: "Employé", selector: (row) => row.employe.nom_employe + " " + row.employe.prenom_employe, sortable: true },
     { name: "Type", selector: (row) => row.type_contrat },
     { name: "Date Début", selector: (row) => formatDate(row.date_debut_contrat) },
-    { name: "Date Fin", selector: (row) => formatDate(row.date_fin_contrat) },
+    { name: "Date Fin", selector: (row) => formatDate(row.date_fin_contrat)  },
     { name: "Statut", selector: (row) => row.statut_contrat },
     {
       name: "Actions",
@@ -151,7 +151,7 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
     const data = {
       type_contrat: typeContrat,
       date_debut_contrat: dateDebutContrat,
-      date_fin_contrat: dateFinContrat,
+      date_fin_contrat: typeContrat.toUpperCase() === "CDI" ? null : dateFinContrat,
       statut_contrat: statutContrat,
       employe_id: employeId,
     };
@@ -204,7 +204,21 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
             <form onSubmit={handleSubmit} className="crud-form">
               <div className="crud-form-group">
                 <label>Type de contrat</label>
-                <input type="text"  placeholder="CDI ou CDD" value={typeContrat} onChange={(e) => setTypeContrat(e.target.value)} required />
+                <input
+                  type="text"
+                  placeholder="CDI ou CDD"
+                  value={typeContrat}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setTypeContrat(value);
+
+                    // Si CDI → vider et désactiver date_fin_contrat
+                    if (value.toUpperCase() === "CDI") {
+                      setDateFinContrat("");
+                    }
+                  }}
+                  required
+                />
               </div>
 
               <div className="crud-form-group">
@@ -214,7 +228,14 @@ const formatDate = (date) => (date ? new Date(date).toLocaleDateString('fr-FR') 
 
               <div className="crud-form-group">
                 <label>Date de fin</label>
-                <input type="date" value={dateFinContrat} onChange={(e) => setDateFinContrat(e.target.value)} />
+              <input
+                type="date"
+                value={dateFinContrat}
+                onChange={(e) => setDateFinContrat(e.target.value)}
+                disabled={typeContrat.toUpperCase() === "CDI"}
+                placeholder={typeContrat.toUpperCase() === "CDI" ? "Non applicable pour CDI" : ""}
+              />
+
               </div>
 
               <div className="crud-form-group">
