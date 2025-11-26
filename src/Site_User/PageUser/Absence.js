@@ -231,7 +231,7 @@ export default function Absence() {
                 <label>Justificatif :</label>
                 <input type="file" name="justificatif" onChange={handleChange} />
 
-                <button type="submit" className="absence-btn">
+               <button type="submit" className="absence-btn">
                   Envoyer
                 </button>
               </form>

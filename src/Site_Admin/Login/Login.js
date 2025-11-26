@@ -69,7 +69,7 @@ export default function Login() {
         <div className="login-card">
         <div className="logo-box">
           <img
-            src="/images/logo/rh_logo.png"
+            src="/images/logo/logo_projet.png"
             alt="Logo"
             height="97"
             style={{ borderRadius: "40%" }}

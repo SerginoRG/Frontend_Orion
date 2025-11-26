@@ -61,7 +61,9 @@ function Salaire() {
   };
 
   // Calculer automatiquement les retenues
-  const calculerRetenuesAuto = async () => {
+ // Calculer automatiquement les retenues
+// Calculer automatiquement les retenues
+const calculerRetenuesAuto = async () => {
   const { employe_id, mois_salaire, annee_salaire, salaire_base } = formData;
 
   if (!employe_id || !mois_salaire || !annee_salaire || !salaire_base) return;
@@ -78,10 +80,34 @@ function Salaire() {
     setFormData(prev => ({
       ...prev,
       retenues_salaire: retenues,
-      salaire_net: calculSalaireNet(prev.salaire_base, prev.primes_salaire, retenues, prev.cnaps, prev.medical, prev.irsa)
+      salaire_net: calculSalaireNet(
+        prev.salaire_base, 
+        prev.primes_salaire, 
+        retenues, 
+        prev.cnaps, 
+        prev.medical, 
+        prev.irsa
+      )
     }));
 
-    setRetenuesInfo(` Détails: ${data.nb_absences} absence(s) + ${data.nb_retards} retard(s) = ${retenues} Ar`);
+    // Message détaillé avec distinction justifié/non justifié
+    const infoMessage = 
+      `📊 Détails du calcul de retenues:\n\n` +
+      `🔴 Absences NON justifiées (avec retenue):\n` +
+      `  • Matin: ${data.nb_absences_matin_non_justifiees} × 4h = ${data.nb_absences_matin_non_justifiees * 4}h\n` +
+      `  • Après-midi: ${data.nb_absences_apresmidi_non_justifiees} × 4h = ${data.nb_absences_apresmidi_non_justifiees * 4}h\n` +
+      `  • Retenue: ${data.retenue_absences} Ar\n\n` +
+      `✅ Absences justifiées (sans retenue):\n` +
+      `  • Matin: ${data.nb_absences_matin_justifiees}\n` +
+      `  • Après-midi: ${data.nb_absences_apresmidi_justifiees}\n` +
+      `  • Motifs: ${data.absences_justifiees.map(a => a.motif).join(', ') || 'Aucune'}\n\n` +
+      `⏰ Retards:\n` +
+      `  • Nombre: ${data.nb_retards} × 1h = ${data.heures_retard}h\n` +
+      `  • Retenue: ${data.retenue_retards} Ar\n\n` +
+      `📌 Taux horaire: ${data.taux_horaire} Ar/h\n` +
+      `💰 Total retenues: ${retenues} Ar`;
+
+    setRetenuesInfo(infoMessage);
   } catch (error) {
     console.error("Erreur calcul retenues:", error);
     setRetenuesInfo("❌ Erreur lors du calcul automatique");
@@ -457,9 +483,18 @@ function Salaire() {
                     readOnly={formData.calcul_auto_retenues}
                   />
                   {retenuesInfo && (
-                    <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                    <div style={{ 
+                      color: '#666', 
+                      marginTop: '10px', 
+                      padding: '10px', 
+                      backgroundColor: '#f0f9ff',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      whiteSpace: 'pre-line',
+                      border: '1px solid #bfdbfe'
+                    }}>
                       {retenuesInfo}
-                    </small>
+                    </div>
                   )}
                 </div>
 
